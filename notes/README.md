@@ -1,0 +1,1 @@
+These are misc notes, the rougher form of Documentation.

@@ -1,0 +1,159 @@
+> create/handle correctly when not install
+  > update
+  > uninstall
+
+Dig class:
+  > tasks tracker     
+    > increment  
+    > update
+    > onOfTotal
+    
+  > excavations handling  
+    > add    
+    > create
+    > append
+    > addAll
+    > failed
+ 
+> Installers Base/Excavators
+  > Language 
+  > Library
+  > Template
+  > Plugin 
+  > Module 
+  > File 
+  > Component
+                 
+> Need a separate class to keep of things will call it the tracker class
+> Need to create a Dig container class.             
+
+> Installers    
+  > Language 
+  > Library
+  > Template
+  > Plugin 
+  > Module 
+  > File 
+  > Component   
+
+> Uninstallers    
+  > Language 
+  > Library
+  > Template
+  > Plugin 
+  > Module 
+  > File 
+  > Component 
+  
+> Updaters 
+  > Language 
+  > Library
+  > Template
+  > Plugin 
+  > Module 
+  > File 
+  > Component  
+
+> cleanup abstract
+  
+> Excavator Core  
+  > cleanup core
+  > set
+  > get
+  > this->route   
+  > this->msg
+  > setOverwrite
+  > getOverwrite   
+  > setUpgrade
+  > getUpgrade     
+  - pushStep
+
+> Make Dig classes part of forge\core\dig
+> Scope excavates/cores  
+> Scope excavates/installers
+> Scope excavates/uninstallers
+> Scope excavates/updaters 
+> Eliminate all calls to parent 
+> Go over excavates/cores
+> Go over excavates/installers
+> Go over excavates/uninstallers
+> Go over excavates/updaters       
+> Excavators\cores extend Excavator  
+> make sure $this->msg instead of $msg  
+> go over Installer args
+> change installer calls to manifest to this->getManfest
+> add pushStep alias to Installer
+> Installer this->_overwrite to this->overWrite() 
+> Go Over Loader 
+> Go excavate/core and connect the methods to installer helpers      
+> Make sure _init gets called on excavates. think it should be fine to call it constructor of Excavator   
+> Figure out core load file for prerequisites
+
+> Figure out how refreshManifestCache works
+> Get refreshManifestCache wired up            
+
+- Add forge_api to lib
+
+> Go over tasks and make sure vars are accessible in the places they should be    
+  > Language 
+  > Library
+  > Template
+  > Plugin 
+  > Module 
+  > File 
+  > Component  
+  > check $this->xml;
+ 
+> get installer imported    
+> remove die()'s spawner should kill dig.      
+> go over getPackage    
+> fix forge bootstrap
+
+# Tests:    
+  > package artifacts       
+  > figure out how to check if extension is installed. discover_install?         
+  > manually point TMP_PATH to joomla install       
+   
+  > # Write:
+    > Bootstrap Joomla
+      > Test Load Joomla DB Instance       
+    
+    > Dig:     
+      > setup create artifact instances
+      > Create Dig Instance with Artifacts
+      > Get Tasks
+      > Get Status
+      > Serialize              
+      > has excavations
+      > run Dig.
+      > Pause and Restart Dig.
+  
+    > Excavations
+      > Install Module Artifact
+      - Uninstall Artifact  
+       
+  # Get working:
+    > Bootstrap Joomla
+      - Test Load Joomla DB Instance       
+    
+    - Dig:     
+      - setup create artifact instances
+      - Create Dig Instance with Artifacts
+      - Get Tasks
+      - Status
+      - Serialize 
+      - has excavations
+      - run Dig.
+      - Pause and Restart Dig      
+  
+    - Excavations
+      - Install Module Artifact
+      - Uninstall Artifact   
+    
+  > Mock Artifacts
+    > component
+    > library
+    > module    
+    > module 2
+    > plugin 
+    > template
