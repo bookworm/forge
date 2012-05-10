@@ -1,0 +1,3 @@
+[submodule "lib/forge_api"]
+	path = lib/forge_api
+	url = git://github.com/bookworm/forge_api.git
