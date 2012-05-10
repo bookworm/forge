@@ -4,7 +4,7 @@ namespace forge\excavate;
 
 use forge\excavate;
 
-class Core implements \forge\excavate\Abstract
+class Core extends \forge\excavate\ExcavateAbstract
 {   
   public $package;          
   public $_paths;
@@ -13,11 +13,13 @@ class Core implements \forge\excavate\Abstract
   public $route = ''; 
   public $msg = '';
   public $overwrite = false; 
-  public $upgrade = false;   
+  public $upgrade = false;    
+  public $uninstall = false;
   public $name;
   public $element;
   public $xml; 
-  public $lang;
+  public $lang; 
+  public $installer;
   
   /** 
    * For compatibility with amnifest install scripts
@@ -30,18 +32,18 @@ class Core implements \forge\excavate\Abstract
   
   public function __construct()
   {       
-    parent::__contstruct();
-    $this->log = KLogger::instance($this->tmpPath() . DS . 'log', KLogger::INFO);   
-    $this->parent = $self;
+    parent::__construct();
+    $this->log = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);   
+    $this->parent = $self;         
+    $this->installer = new Installer($this);
+    var_dump($this->installer);
   }     
 
   public function _init()
   {        
-    parent::_init();
-
-    if($this->upgrade())
+    if($this->upgrade)
       return $this->setupUpdate();
-    else if($this->uninstall())
+    else if($this->uninstall)
       return $this->setupUninstall();    
     else
       return $this->setupInstall();
@@ -57,7 +59,7 @@ class Core implements \forge\excavate\Abstract
 
   public function setupInstall()
   {
-		if(!$this->installer->findManifest($this->getPath('source'))
+		if(!$this->installer->findManifest($this->getPath('source')))
 			return false;
 
 		return true;
@@ -112,9 +114,9 @@ class Core implements \forge\excavate\Abstract
     foreach($this->rollbacks as $rollback)
     {               
                                      
-      if(isset($rollback['task']) AND method_exists("task_$rollback['task']".'_'.'rollback')  
+      if(isset($rollback['task']) AND method_exists("task_$rollback".'_'.'rollback')) 
       {
-        if($this->executeSpecificTask("task_$rollback['task']".'_'.'rollback', $arg) == false)
+        if($this->executeSpecificTask("task_$rollback".'_'.'rollback', $arg) == false)
           throw error("Couldn't Properly Abort:" .$this->artifact->name);  
       }
       else
@@ -157,7 +159,7 @@ class Core implements \forge\excavate\Abstract
  
   public function getDbo()
   {
-    return JFactory::getDbo();
+    return \JFactory::getDbo();
   }     
          
   public function getOverwrite()

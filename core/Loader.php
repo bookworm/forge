@@ -1,49 +1,64 @@
 <?php
 
-namespace forge\core;
+namespace forge\core; 
 
-class Loader
+use forge\core;     
+
+require_once 'object.php';
+
+class Loader extends \forge\core\Object
 {    
   public $classes = array();
   
   public function __construct()
   {
-  }      
+  }   
+  
+  public static function &getInstance()
+  {
+    static $instance; 
+
+    if(!is_object($instance))
+      $instance = new self();   
+
+    return $instance;
+  }   
   
   public function loadClasses($classes)
   {    
-    return $this->loadClasses($classes);
+    return $this->loadClass($classes);
   }
   
-  public static function loadClass($className)
+  public function loadClass($className)
   {      
     if(!is_array($className))
       $classes = array($className);
     else
-      $classes = $className
+      $classes = $className;  
+      
     foreach($classes as $className)
     {
       $path = '';
       if(strpos($className, "\\")) 
       {  
-        $paths = explode("\\");      
-        $path  = dirname(dirname(__DIR__));   
+        $paths = explode("\\", $className);      
+        $path  = dirname(dirname(__FILE__));   
 
-        foreach($paths as $p) {
-          $path .=  DS . $p;
-        }
+       foreach($paths as $p) {
+         $path .= DS.$p;
+       }
       }
       else
-        $path = dirname(dirname(__DIR__)) . DS . $className;
-
+        $path = dirname(dirname(__FILE__)) . DS . $className;
+       
       if(file_exists($path . '.php')) 
         require_once $path . '.php';     
       else if(file_exists($path . '_' .substr(JVERSION, 0, 3) . '.php'))     
         require_once $path . '_' . substr(JVERSION, 0, 3) . '.php';       
-      else if(file_exists(dirname(dirname(__DIR__)) . DS . substr(JVERSION, 0, 3) . DS . $className . '.php'))   
-        require_once dirname(dirname(__DIR__)) . DS . substr(JVERSION, 0, 3) . DS . $className . '.php';   
+      else if(file_exists(dirname(dirname(__FILE__)) . DS . substr(JVERSION, 0, 3) . DS . $className . '.php'))   
+        require_once dirname(dirname(__FILE__)) . DS . substr(JVERSION, 0, 3) . DS . $className . '.php';   
       else
-        throw new Exception("Class: $className not found");  
+        throw new \Exception("Class: $className not found");  
     }
   } 
   
@@ -57,43 +72,50 @@ class Loader
     if(!is_array($helperName))
       $helpers = array($helperName);
     else
-      $helpers = $className
+      $helpers = $className;
+      
     foreach($helpers as $helperName)
     {  
-      $path = dirname(dirname(__DIR__)) . DS . 'helpers' . DS . $helperName . '.php';
+      $path = dirname(dirname(__FILE__)) . DS . 'helpers' . DS . $helperName . '.php';    
 
       if(file_exists($path)) 
         include_once $path;
       else
-        throw new Exception("Helper: $helperName not found");
+        throw new \Exception("Helper: $helperName not found");
     }          
-  } 
+  }       
+  
+  public function loadLibs($libName)
+  {
+    return $this->loadLib($libName);
+  }
   
   public function loadLib($libName)
   {
     if(!is_array($libName))
       $libs = array($libName);
     else
-      $libs = $libName
+      $libs = $libName;
+      
     foreach($libs as $libName)
     {       
       $path = '';
       if(strpos($libName, "\\")) 
       {  
-        $paths = explode("\\");      
-        $path  = dirname(dirname(__DIR__)) . DS . 'lib';   
+        $paths = explode("\\", $libName);      
+        $path  = dirname(dirname(__FILE__)) . DS . 'lib';   
 
         foreach($paths as $p) {
           $path .= DS . $p;
         }
       }
       else
-        $path = dirname(dirname(__DIR__)) . DS . 'lib' . DS . $libName;
+        $path = dirname(dirname(__FILE__)) . DS . 'lib' . DS . $libName;
 
       if(file_exists($path . '.php')) 
-        require_once $path;  
+        require_once $path . '.php';  
       else
-        throw new Exception("Library: $libName not found");
+        throw new \Exception("Library: $libName not found");
     }
   }
 }

@@ -3,14 +3,17 @@
 namespace forge\excavate;
 
 use forge\excavate;
+                   
+$loader = \forge\core\Loader::getInstance();      
+$loader->loadClasses(array('excavate\installer'));
 
 class Excavator extends \forge\excavate\Core
 {     
   public $installer;       
   
-  public function __construct($artifact, $digTasksCount, $options=())
+  public function __construct($artifact, $digTasksCount, $options=array())
   {   
-    $this->log = KLogger::instance($this->tmpPath().DS.'log', KLogger::INFO);
+    $this->log = \KLogger::instance($this->tmpPath().DS.'log', \KLogger::INFO);
     
     $this->artifact               = $artifact;
     $this->digTasksCount          = $digTasksCount;  
@@ -18,8 +21,8 @@ class Excavator extends \forge\excavate\Core
     $this->classMethods           = get_class_methods($this);        
     $this->setProperties($options);
            
-    $this->dig = \forge\core\dig\Dig::getInstance();  
-    $this->installer = Installer::getInstance();   
+    $this->dig = \forge\core\Dig::getInstance();  
+    $this->installer = Installer::getInstance($this);   
     
     $this->_init();
   }

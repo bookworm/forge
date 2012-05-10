@@ -34,7 +34,7 @@ jimport('joomla.language.language');
 jimport('joomla.utilities.string');     
 
 if(!defined('FORGE_TMP_PATH'))
-  define('FORGE_TMP_PATH', JPATH_ROOT.DS.'tmp')
+  define('FORGE_TMP_PATH', JPATH_ROOT.DS.'tmp');
 
 // Instantiate the application.
 # $app = JFactory::getApplication('site');

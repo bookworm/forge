@@ -241,7 +241,7 @@ class Module extends \forge\excavate\Excavator
 			return false;
 		}
 
-		$this->eid = $db->loadResult()
+		$this->eid = $db->loadResult();
 		
 		return true;
   }  

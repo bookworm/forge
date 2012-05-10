@@ -27,7 +27,7 @@ class Package extends \forge\core\Object
 { 
   public function retrievePackage($artifact) 
   {   
-    $log      = KLogger::instance($this->tmpPath().DS.'log', KLogger::INFO);     
+    $log      = \KLogger::instance($this->tmpPath().DS.'log', \KLogger::INFO);     
     $filename = $artifact->package_name . '.zip'; 
 
     if(file_exists(JPATH_SITE.DS.'forge'.DS.'vendor'.DS.'cache'.DS.$filename))    
@@ -47,7 +47,7 @@ class Package extends \forge\core\Object
 
   public function getPackage($artifact)
   {    
-    $log = KLogger::instance($this->tmpPath().DS.'log', KLogger::INFO);        
+    $log = \KLogger::instance($this->tmpPath().DS.'log', \KLogger::INFO);        
 
     $url = $artifact->package_uri;   
     if(empty($url)) {
@@ -60,7 +60,7 @@ class Package extends \forge\core\Object
     
   public function downloadPackage($url, $artifact)
   { 
-    $log = KLogger::instance($this->tmpPath().DS.'log', KLogger::INFO);     
+    $log = \KLogger::instance($this->tmpPath().DS.'log', \KLogger::INFO);     
 
     $php_errormsg = 'Error Unknown';
     ini_set('track_errors', true);
@@ -93,7 +93,7 @@ class Package extends \forge\core\Object
   
   public function extractPackage($filename, $artifact)
   {     
-    $log = KLogger::instance($this->tmpPath().DS.'log', KLogger::INFO);
+    $log = \KLogger::instance($this->tmpPath().DS.'log', \KLogger::INFO);
 
     $archivename = $filename;
     $tmpdir      = uniqid('install_');  

@@ -389,7 +389,7 @@ class File extends \forge\excavate\Excavator
 		$this->msg .= ob_get_contents();
 		ob_end_clean();
 
-		if($this-> != '')
+		if($this->msg != '')
 			$this->set('extension_message', $this->msg); 
 			
 		return true;

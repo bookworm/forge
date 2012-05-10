@@ -1,15 +1,17 @@
 <?php
 
-namespace forge\core\dig;
+namespace forge\core;
 
-use forge\core\dig; 
+use forge\core; 
 
 // no direct access
 defined('_Forge') or die('Restricted access'); 
  
 // Import Prequisites
 jimport('joomla.filesystem.file'); 
-jimport('joomla.filesystem.folder');
+jimport('joomla.filesystem.folder');    
+$loader = \forge\core\Loader::getInstance();      
+$loader->loadClasses(array('core\dig\Status', 'core\dig\Tasks', 'core\dig\Excavator'));
 
 class Dig extends \forge\core\Object
 {          
@@ -22,10 +24,10 @@ class Dig extends \forge\core\Object
   
   public function __construct($artifacts)
   {
-    $this->log    = KLogger::instance($this->tmpPath() . DS . 'log', KLogger::INFO);     
-    $this->status = Status::getInstance();
-    $this->tasks  = Tasks::getInstance();
-    $this->ex     = new Excavator(self, $artifacts);    
+    $this->log    = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);     
+    $this->status = \forge\core\dig\Status::getInstance();
+    $this->tasks  = \forge\core\dig\Tasks::getInstance();      
+    $this->ex     = new \forge\core\dig\Excavator($this, $artifacts);    
     
     $this->status->_init();     
     $this->tasks->_init();
@@ -41,7 +43,7 @@ class Dig extends \forge\core\Object
     }
     
     $this->status->started();  
-    $this->do();      
+    $this->go();      
     
     if($this->finish() == true)
       $this->status->finished();
@@ -72,7 +74,7 @@ class Dig extends \forge\core\Object
     $this->status->paused();   
   } 
   
-  public function do()
+  public function go()
   {  
     foreach($this->ex->excavations as $key => $excavation)
     {

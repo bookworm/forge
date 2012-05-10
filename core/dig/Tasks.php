@@ -11,7 +11,7 @@ class Tasks extends \forge\core\Object
   
   public function __construct()
   { 
-    $this->log = KLogger::instance($this->tmpPath() . DS . 'log', KLogger::INFO);
+    $this->log = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);
   }  
   
   public function _init()
@@ -19,11 +19,21 @@ class Tasks extends \forge\core\Object
     $this->ex     = Excavator::getInstance();
     $this->status = Status::getInstance();    
     $this->getTasksFromExcavations();
+  }  
+  
+  public static function &getInstance()
+  {
+    static $instance; 
+
+    if(!is_object($instance))
+      $instance = new self();   
+
+    return $instance;
   }
   
   public function getTasksFromExcavations()
   {
-    foreach($this->dig->ex->excavations $key => $excavation)
+    foreach($this->dig->ex->excavations as $key => $excavation)
     {   
       $ext_name  = $excavation->artifact->ext_name;   
               
@@ -34,7 +44,7 @@ class Tasks extends \forge\core\Object
     }
   }
   
-  public function increment($resave = true,)
+  public function increment($resave = true)
   { 
     $this->on++;  
     
@@ -42,7 +52,6 @@ class Tasks extends \forge\core\Object
       $this->status->serialize();
   }
   
-
   public function update($total, $resave = true, $replace = false)
   {
     if($replace == false)

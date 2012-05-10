@@ -1,4 +1,8 @@
-<?php
+<?php 
+
+namespace forge\excavate;
+
+use forge\excavate;
 
 defined('JPATH_PLATFORM') or die;
 
@@ -19,10 +23,19 @@ class Installer extends \forge\core\Object
 	
 	public function __construct($excavator)
 	{         
-	  parent::__construct();
 	  $this->excavator = $excavator;     
 	  $this->_db       = $this->excavator->getDbo(); 
-	}
+	}    
+	
+	public static function &getInstance($excavator)
+  {
+    static $instance; 
+
+    if(!is_object($instance))
+      $instance = new self($excavator);   
+
+    return $instance;
+  }
 
 	public function getOverwrite()
 	{
@@ -834,7 +847,9 @@ class Installer extends \forge\core\Object
 	
 	public function installedArtifact($artifact)
 	{
-    return true if($ext->load(array($name => $artifact->ext_name)));           
+    if($ext->load(array($name => $artifact->ext_name)));    
+      return true;  
+            
     return false;
 	} 
 	
@@ -842,8 +857,9 @@ class Installer extends \forge\core\Object
 	{
 	  $ext = JTable::getInstance('extension');
 		
-	  foreach($artifacts as $artifact) {   
-	    return false if(!$ext->load(array($name => $artifact->ext_name)));
+	  foreach($artifacts as $artifact) {      
+	    if(!$ext->load(array($name => $artifact->ext_name)))
+  	    return false;
 	  }
 	  
 	  return true;

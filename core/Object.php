@@ -6,12 +6,12 @@ class Object
 {              
   public $log;
   
-  public function &getInstance()
+  public static function &getInstance()
   {
     static $instance; 
 
     if(!is_object($instance))
-      $instance = new self($config);   
+      $instance = new self();   
 
     return $instance;
   }  

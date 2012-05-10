@@ -11,14 +11,24 @@ class Status extends \forge\core\Object
   
   public function __construct()
   {
-    $this->log = KLogger::instance($this->tmpPath() . DS . 'log', KLogger::INFO);
+    $this->log = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);
   }      
   
   public function _init()
   {
     $this->ex    = Excavator::getInstance();
     $this->tasks = Tasks::getInstance();
-  }   
+  }     
+  
+  public static function &getInstance()
+  {
+    static $instance; 
+
+    if(!is_object($instance))
+      $instance = new self();   
+
+    return $instance;
+  }
   
   public function paused()
   {

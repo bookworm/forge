@@ -2,13 +2,14 @@
 
 namespace forge\excavate\installer;
 
-use forge\excavate\installer;
+use forge\excavate\installer; 
 
 class Component extends \forge\excavate\cores\Component 
 {
   public function task_setPathsBasicChecks()
-  {       
-    return false if(!$this->_taskSetPaths());      
+  { 
+    if(!$this->_taskSetPaths())      
+      return false;      
     
     if(!$this->manifest->administration) {
 			JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ERROR_COMP_INSTALL_ADMIN_ELEMENT'));

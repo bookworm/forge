@@ -4,7 +4,7 @@ namespace forge\excavate;
 
 use forge\excavate;
 
-abstract Abstract extends \forge\core\Object
+class ExcavateAbstract extends \forge\core\Object
 { 
   public $digTasksCount = 0; 
   public $artifact;    
@@ -38,15 +38,6 @@ abstract Abstract extends \forge\core\Object
     return $this;
   }  
 
-  public function addMessage($key,$message)
-  {
-    $this->message    = $message;
-    $this->messages[] = $message; 
-    $this->log->logInfo($message);
-    
-    return $this;
-  }   
-  
   public function setErrorMessage($message)
   {                                       
     $this->success      = false;

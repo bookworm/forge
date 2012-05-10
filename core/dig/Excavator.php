@@ -2,7 +2,13 @@
 
 namespace forge\core\dig;
 
-use forge\core\dig;
+use forge\core\dig;      
+
+$loader = \forge\core\Loader::getInstance();      
+$loader->loadClasses(array('excavate\ExcavateAbstract', 'excavate\Core', 'excavate\Excavator',
+  'excavate\cores\Component', 'excavate\cores\File', 'excavate\cores\Language',    
+  'excavate\cores\Library', 'excavate\cores\Module', 'excavate\cores\Plugin', 'excavate\cores\Template'
+));
 
 class Excavator extends \forge\core\Object
 {     
@@ -22,7 +28,7 @@ class Excavator extends \forge\core\Object
   public function _addAll()
   {
     foreach($this->artifacts as $artifact) {
-      $this->addExcavation($artifact);
+      $this->add($artifact);
     }
   }
   
@@ -43,11 +49,11 @@ class Excavator extends \forge\core\Object
     return new $classPath($artifact, $this->dig->tasks->total);
   }     
   
-  public function classPath()
+  public function classPath($artifact)
   {
-    $loader    = Loader::getInstance(); 
+    $loader    = \forge\core\Loader::getInstance(); 
     $className = ucwords($artifact->type);  
-    $classPath = 'forge\excavate'; 
+    $classPath = 'excavate'; 
     $classPath .= '\\';
 
     if(isset($artifact->update))
@@ -57,11 +63,13 @@ class Excavator extends \forge\core\Object
     else         
       $classPath .= 'installer';
 
-    $classPath .= "\$className".'_V'.$this->jversionNum;    
-
+    $classPath .= "\\$className";    
+    # .'_V'.substr(JVERSION, 0, 3)
+                    
+    echo $classPath;
     $loader->loadClass($classPath);   
     
-    return $classPath;
+    return 'forge\\'.$classPath;
   }
   
   public function completed($artifact)
