@@ -58,7 +58,7 @@ class Core extends \forge\excavate\ExcavateAbstract
   	else 
     	$group = null;
     	
-    $this->eid = \forge\excavate\Installer::getExtensionID($artifact->type, $artifact->db_name, $client, $group))
+    $this->eid = \forge\excavate\Installer::getExtensionID($artifact->type, $artifact->db_name, $client, $group);
               
 		return true;
   } 
