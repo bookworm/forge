@@ -23,24 +23,31 @@ class Dig extends \forge\core\Object
   public $extension = null;
   
   public function __construct($artifacts)
-  {
-    $this->log    = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);     
-    $this->status = \forge\core\dig\Status::getInstance();
-    $this->tasks  = \forge\core\dig\Tasks::getInstance();      
+  {      
+    $this->log    = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO); 
+    $this->tasks  = new \forge\core\dig\Tasks($this);     
+    $this->status = new \forge\core\dig\Status();
     $this->ex     = new \forge\core\dig\Excavator($this, $artifacts);    
-    
-    $this->status->_init();     
-    $this->tasks->_init();
-  }  
+
+    $this->status->_init($this);    
+    $this->ex->_init($this);
+    $this->tasks->_init($this);       
+  } 
+  
+  public static function &getInstance($artifacts=array())
+  {
+    static $instance; 
+
+    if(!is_object($instance))
+      $instance = new self($artifacts);   
+
+    return $instance;
+  }
   
   public function run()
   {
     if($this->status->restartNeeded()) 
       $this->restart();
-    else {
-      $this->ex->addAll();     
-      $this->tasks->getTasksFromExcavations();
-    }
     
     $this->status->started();  
     $this->go();      
@@ -75,11 +82,10 @@ class Dig extends \forge\core\Object
   } 
   
   public function go()
-  {  
+  { 
     foreach($this->ex->excavations as $key => $excavation)
     {
-      $this->ex->on = $this->ex->excavations[$key];   
-    
+      $this->ex->on = $this->ex->excavations[$key];          
       if($this->status->canContinue())
       { 
         $this->status->serialize();
@@ -89,34 +95,34 @@ class Dig extends \forge\core\Object
           break;
         } 
         else
-          $this->status->finishedExcavation($excavation);
+          $this->status->finishedExcavation($excavation, $key);
       }
       else 
         $this->pause();
-    }   
+    } 
     
     return true;
   }  
   
   public function finish()
-  {
+  {  
     $files = \JFolder::files($this->tmpPath() . DS .'excavations', '_start');
-
-    if(!empty($files) AND empty($this->ex->artifacts))
-    {       
-      $this->ex->artifacts = array(); 
-
-      foreach($files as $key => $file) {    
-        $artifact = unserialize(file_get_contents($this->tmpPath() . DS .'excavations' . $file));       
-        $this->ex->artifacts[$artifact->ext_name] = $artifact;         
-      }  
-
-      return false;
-    }  
-    elseif(!empty($this->ex->artifacts))     
-      return false; 
-    else    
-      return true;    
+    return true;
+   # if(!empty($files) AND empty($this->ex->artifacts))
+   # {       
+   #   $this->ex->artifacts = array(); 
+   # 
+   #   foreach($files as $key => $file) {    
+   #     $artifact = unserialize(file_get_contents($this->tmpPath() . DS .'excavations' . $file));       
+   #     $this->ex->artifacts[$key] = $artifact;         
+   #   }  
+   # 
+   #   return false;
+   # }  
+   # elseif(!empty($this->ex->artifacts))     
+   #   return false; 
+   # else    
+   #   return true;        
   }  
   
   public function refreshManifestCache($eid)

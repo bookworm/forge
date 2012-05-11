@@ -1,6 +1,8 @@
 <?php 
 
-namespace forge\core;
+namespace forge\installer; 
+
+use forge\core;
 
 // no direct access
 defined( '_Forge' ) or die( 'Restricted access' );    
@@ -24,7 +26,17 @@ jimport('joomla.filesystem.path');
  * @license     http://www.gnu.org/licenses/gpl-3.0.html GNU/GPLv3      
  */
 class Package extends \forge\core\Object
-{ 
+{       
+  public static function &getInstance()
+  {
+    static $instance; 
+
+    if(!is_object($instance))
+      $instance = new self();   
+
+    return $instance;
+  }
+
   public function retrievePackage($artifact) 
   {   
     $log      = \KLogger::instance($this->tmpPath().DS.'log', \KLogger::INFO);     
@@ -35,7 +47,7 @@ class Package extends \forge\core\Object
     else  
     {      
       if($this->getPackage($artifact) == false) {
-        $log->logError('Couldn\'t get the package for: ' . $artifact->ext_name);      
+        $log->logError('Couldn\'t get the package for: ' . $artifact->slug);      
         return false;
       }
       else
@@ -51,7 +63,7 @@ class Package extends \forge\core\Object
 
     $url = $artifact->package_uri;   
     if(empty($url)) {
-      $log->logError('Couldn\'t get the package url from API: ' . $artifact->ext_name);      
+      $log->logError('Couldn\'t get the package url from API: ' . $artifact->slug);      
       return false;
     }
 
@@ -70,7 +82,7 @@ class Package extends \forge\core\Object
     $error       = strstr($php_errormsg,'failed to open stream:');      
 
     if(!$inputHandle) { 
-      $log->logError("Couldn't download ". $artifact->ext_name . "from $url");      
+      $log->logError("Couldn't download ". $artifact->name . "from $url");      
       return false; 
     }              
 
@@ -98,7 +110,7 @@ class Package extends \forge\core\Object
     $archivename = $filename;
     $tmpdir      = uniqid('install_');  
 
-    $extractdir  = \JPath::clean(FORGE_TMP_PATH.DS.'installation'.DS.$artifact->ext_name);
+    $extractdir  = \JPath::clean(FORGE_TMP_PATH.DS.'installation'.DS.$artifact->slug);
     $archivename = \JPath::clean($archivename);  
 
     $result = \JArchive::extract( $archivename, $extractdir);   

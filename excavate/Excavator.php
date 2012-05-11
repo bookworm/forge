@@ -5,26 +5,33 @@ namespace forge\excavate;
 use forge\excavate;
                    
 $loader = \forge\core\Loader::getInstance();      
-$loader->loadClasses(array('excavate\installer'));
+$loader->loadClasses(array('installer\Package', 'excavate\installer'));
 
 class Excavator extends \forge\excavate\Core
 {     
-  public $installer;       
+  public $installer;      
+  public $manifestClass; 
   
-  public function __construct($artifact, $digTasksCount, $options=array())
+  public function __construct($artifact, $dig, $options=array())
   {   
-    $this->log = \KLogger::instance($this->tmpPath().DS.'log', \KLogger::INFO);
-    
+    parent::__construct();
     $this->artifact               = $artifact;
-    $this->digTasksCount          = $digTasksCount;  
+    $this->digTasksCount          = $dig->tasks->total;  
     $this->type                   = $artifact->type;        
     $this->classMethods           = get_class_methods($this);        
     $this->setProperties($options);
-           
-    $this->dig = \forge\core\Dig::getInstance();  
-    $this->installer = Installer::getInstance($this);   
-    
-    $this->_init();
+    $this->dig = $dig;  
+    $this->installer = new Installer($this);  
+    $this->parent = $this;  
+    if(method_exists($this, '_init')) $this->_init();
+  }     
+  
+  public function __sleep()
+  {
+    return array('eid', 'route', 'msg', 'overwrite', 'upgrade', 'uninstall', 'name', 
+      'shouldRetrievePackage', 'digTasksCount', 'artifact', 'onTask', 'installer',
+      'type', 'tasks', 'success', 'rollbacks', 'message', 'messages', 'errorMessage', 'tasksCount'
+    );
   }
   
   public function getRedirectURL()
@@ -45,7 +52,7 @@ class Excavator extends \forge\excavate\Core
   public function getManifest()
   {
     if(!is_object($this->manifest))
-      $this->manifest = $this->installer->findManifest(); 
+      $this->installer->findManifest(); 
 
     return $this->manifest; 
   } 
@@ -83,9 +90,9 @@ class Excavator extends \forge\excavate\Core
     return $this->installer->findDeletedFiles($old_files, $new_files);
   }
  
-  public function parseFiles($element, $cid = 0, $oldFiles = null, $oldMD5 = null)
+  public function parseFiles($elem, $cid = 0, $oldFiles = null, $oldMD5 = null)
   {
-    return $this->installer->parseFiles($elem, $cid=0, $oldFiles, $oldMD5);
+    return $this->installer->parseFiles($elem, $cid, $oldFiles, $oldMD5);
   }  
 
   public function parseLanguages($elem, $cid = 0)
@@ -95,7 +102,7 @@ class Excavator extends \forge\excavate\Core
     
   public function parseMedia($elem, $cid = 0) 
   {
-    return $this->installer->parseMedia($elem, $cid=0);
+    return $this->installer->parseMedia($elem, $cid);
   } 
  
   public function copyFiles($files, $overwrite = null) 
@@ -115,7 +122,7 @@ class Excavator extends \forge\excavate\Core
   
   public function setSchemaVersion($schema, $eid)
 	{       
-	  return $this->installer->setSchemaVersion($schemae, $eid);
+	  return $this->installer->setSchemaVersion($schema, $eid);
   } 
   
   public function parseSchemaUpdates($schema, $eid)

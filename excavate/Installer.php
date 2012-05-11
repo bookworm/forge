@@ -15,8 +15,8 @@ jimport('joomla.base.adapter');
 class Installer extends \forge\core\Object
 {
 	public $extension = null;
-	protected $extension_message = null;
-	protected $redirect_url = null;    
+	public $extension_message = null;
+	public $redirect_url = null;    
 	public $excavator;     
 	protected $_db; 
 	public $manfiest;
@@ -25,7 +25,12 @@ class Installer extends \forge\core\Object
 	{         
 	  $this->excavator = $excavator;     
 	  $this->_db       = $this->excavator->getDbo(); 
-	}    
+	}
+	
+	public function __sleep()
+  {    
+    return array('extension_message', 'redirect_url');
+  }    
 	
 	public static function &getInstance($excavator)
   {
@@ -77,6 +82,11 @@ class Installer extends \forge\core\Object
 	  return $this->excavator->getPath($name, $default);
 	}           
 	
+  public function setPath($name, $value)
+  {
+    return $this->excavator->setPath($name, $value);
+	}  
+	
 	public function abort($msg = null, $type = null)
 	{  
 	  return $this->excavator->abort($msg, $type); 
@@ -113,21 +123,21 @@ class Installer extends \forge\core\Object
 	}
 
 	public function parseSQLFiles($element)
-	{
+	{        
 		if(!$element || !count($element->children()))
 			return 0;
 
 		$queries  = array();
 		$db       = $this->_db;
-		$dbDriver = strtolower($db->name);
-
+		$dbDriver = strtolower($db->name);        
+    
 		if($dbDriver == 'mysqli')
 			$dbDriver = 'mysql';
 		elseif($dbDriver == 'sqlsrv')
 			$dbDriver = 'sqlazure';
 
 		$sqlfile = '';
-		foreach ($element->children() as $file)
+		foreach($element->children() as $file)
 		{
 			$fCharset = (strtolower($file->attributes()->charset) == 'utf8') ? 'utf8' : '';
 			$fDriver  = strtolower($file->attributes()->driver);
@@ -139,9 +149,9 @@ class Installer extends \forge\core\Object
 
 			if($fCharset == 'utf8' && $fDriver == $dbDriver)
 			{
-				$sqlfile = $this->getPath('extension_root') . '/' . $file;
+				$sqlfile = $this->getPath('extension_root') . '/' . $file;   
 
-				if(!file_exists($sqlfile)) {
+				if(!file_exists($sqlfile)) { 
 					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_SQL_FILENOTFOUND', $sqlfile));
 					return false;
 				}
@@ -345,8 +355,8 @@ class Installer extends \forge\core\Object
 		$copyfiles = array();
 		$client = \JApplicationHelper::getClientInfo($cid);
 
-		if($client) {
-			$pathname    = 'extension_' . $client->name;
+		if($client) {                      
+			$pathname    = 'extension_' . $client->name;  
 			$destination = $this->getPath($pathname);
 		}
 		else {
@@ -387,7 +397,7 @@ class Installer extends \forge\core\Object
 			$copyfiles[]  = $path;
 		}
 
-		foreach ($element->children() as $file)
+		foreach($element->children() as $file)
 		{
 			$path['src']  = $source . '/' . $file;
 			$path['dest'] = $destination . '/' . $file;
@@ -847,7 +857,7 @@ class Installer extends \forge\core\Object
 	
 	public function installedArtifact($artifact)
 	{
-    if($ext->load(array($name => $artifact->ext_name)));    
+    if($ext->load(array($name => $artifact->db_name)));    
       return true;  
             
     return false;
@@ -858,7 +868,7 @@ class Installer extends \forge\core\Object
 	  $ext = \JTable::getInstance('extension');
 		
 	  foreach($artifacts as $artifact) {      
-	    if(!$ext->load(array($name => $artifact->ext_name)))
+	    if(!$ext->load(array('name' => $artifact->db_name)))
   	    return false;
 	  }
 	  

@@ -14,21 +14,11 @@ class Status extends \forge\core\Object
     $this->log = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);
   }      
   
-  public function _init()
+  public function _init($dig)
   {
-    $this->ex    = Excavator::getInstance();
-    $this->tasks = Tasks::getInstance();
+    $this->ex    = $dig->ex;
+    $this->tasks = $dig->tasks;
   }     
-  
-  public static function &getInstance()
-  {
-    static $instance; 
-
-    if(!is_object($instance))
-      $instance = new self();   
-
-    return $instance;
-  }
   
   public function paused()
   {
@@ -68,20 +58,22 @@ class Status extends \forge\core\Object
   } 
   
   public function serialize()
-  {   
+  {      
     if(file_exists($this->tmpPath() . DS . 'dig_status')) 
       $serialized = unserialize(file_get_contents($this->tmpPath() . DS . 'dig_status'));
     else
       $serialized = array();      
     
     $serialized['onTask']            = $this->tasks->on;   
-    $serialized['tasks']             = $this->tasks->total;    
-    $serialized['onExcavation']      = $this->ex->on;
-    $serialized['onExcavationTask']  = $this->ex->on->onTask;    
-    $serialized['excavationTasks']   = $this->ex->on->tasks;
+    $serialized['tasks']             = $this->tasks->total;  
+    if($this->ex->on) {
+      $serialized['onExcavation']      = $this->ex->on;  
+      $serialized['onExcavationTask']  = $this->ex->on->onTask;    
+      $serialized['excavationTasks']   = $this->ex->on->tasks;
+    }  
     $serialized['artifacts']         = $this->ex->artifacts;   
-    $serialized['excavations']       = $this->ex->excavations;
-    
+    $serialized['excavations']       = $this->ex->excavations; 
+        
     $serialized = serialize($serialized);   
     file_put_contents(FORGE_TMP_PATH . DS . 'dig_status', $serialized);
     
@@ -101,11 +93,18 @@ class Status extends \forge\core\Object
     return $this->unserialized['onTaskOfTotal'];    
   }
   
-  public function addedExcavation($artifact)
-  {
-    $filename        = 'Excavation' . '_' . $ext_name . '_start'; 
-    $artifactEncoded = serialize($this->ex->artifacts[$ext_name]);  
-    file_put_contents($this->tmpPath() . DS . 'excavations'. DS . $filename, $artifactEncoded);
+  public function addedExcavation($excavation)
+  {            
+    $slug = $excavation->artifact->slug;
+    $filename        = 'Excavation' . '_' . $slug . '_start'; 
+    $artifactEncoded = serialize($this->ex->artifacts[$slug]);  
+    
+    $folder = $this->tmpPath() . DS . 'excavations';  
+      
+    if(!\JFolder::exists($folder))  
+      \JFolder::create($folder);
+		  
+    file_put_contents($folder. DS . $filename, $artifactEncoded);
   }  
   
   public function appendedExcavation($artifact)
@@ -116,30 +115,30 @@ class Status extends \forge\core\Object
   public function failedExcavation($excavation)
   {
     $this->log->logError("Failed on excavation: ". $excavation->artifact->name);  
-    die("Failed on excavation: ". $excavation->artifact->name);
+    die("Failed on excavation: ". $excavation->artifact->name . "\n" . 'Last error: ' . "\n". \JError::getError());
   }   
   
-  public function finishedExcavation($excavation)
+  public function finishedExcavation($excavation, $key)
   {            
-    $ext_name = $excavation->artifact->ext_name();
+    $slug = $excavation->artifact->slug;
     
     // Rename excavation file.     
-    $fileold = \JFile::makeSafe('Excavation' . '_' . $ext_name . '_start');
-    $filenew = \JFile::makeSafe('Excavation' . '_' . $ext_name . '_completed');
+    $fileold = \JFile::makeSafe('Excavation' . '_' . $slug . '_start');
+    $filenew = \JFile::makeSafe('Excavation' . '_' . $slug . '_completed');
     $path    = $this->tmpPath() . DS . 'excavations';                                       
 
-    renameFile($fileold, $filenew, $path);    
+    renameFile($fileold, $filenew, $path);  
     $this->log->logInfo('Finished Excavation On: '. $excavation->artifact->name);   
 
     // Unset array values      
     $this->ex->on = null;
-    unset($this->ex->artifacts[$ext_name]);  
+    unset($this->ex->artifacts[$key]);  
     unset($this->ex->excavations[$key]);
   } 
   
   public function canContinue()
   {
-    $timer = Timer::getInstance();
+    $timer = \forge\core\Timer::getInstance();
     if($timer->getTimeLeft() > 0) return true;
   }  
 }

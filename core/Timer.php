@@ -1,4 +1,8 @@
-<?php  
+<?php
+
+namespace forge\core;
+
+use forge\core;
 
 // no direct access
 defined( '_Forge' ) or die( 'Restricted access' );        
@@ -30,10 +34,20 @@ class Timer extends \forge\Core\Object
     $this->maxExecTime = $phpMaxExecTime * $bias;
   }   
 
-   public function __wakeup()
-   {
-     $this->startTime = $this->microtimeFloat();
-   }
+  public function __wakeup()
+  {
+    $this->startTime = $this->microtimeFloat();
+  }
+  
+  public static function &getInstance()
+  {
+    static $instance; 
+
+    if(!is_object($instance))
+      $instance = new self();   
+
+    return $instance;
+  }
   
   public function getTimeLeft()
   {

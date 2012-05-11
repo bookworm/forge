@@ -29,55 +29,54 @@ class DigTest extends PHPUnit_Framework_TestCase
     $this->pluginMock     = new PluginMock(); 
     $this->templateMock   = new TemplateMock();     
     
-    $this->artifacts = array($this->componentMock, $this->libraryMock, $this->moduleMock1,
-      $this->pluginMock, $this->templateMock 
-    );       
-    
-    $this->dig = new \forge\core\Dig($this->artifacts);
+   $this->artifacts = array($this->componentMock, $this->libraryMock, $this->moduleMock1,
+     $this->pluginMock, $this->templateMock 
+   );       
+
+   $this->dig = \forge\core\Dig::getInstance(array($this->componentMock)); 
   }
   
-  public function testCreateInstance()
-  {
-    $dig = new \forge\dig\Dig($this->artifacts);
-    $this->assertInstanceOf('Dig', $dig);  
-    unset($dig);       
-  }
-  
+  # public function testCreateInstance()
+  # {
+  #   $dig = new \forge\core\Dig($this->artifacts);
+  #   $this->assertInstanceOf('\forge\core\Dig', $dig);          
+  #   unset($dig);
+  # }
+  # 
   # public function testGetTasks()
   # {       
-  #   $dig = new \forge\dig\Dig($this->artifacts);  
-  #   $dig->ex->addAll();         
+  #   $dig = new \forge\core\Dig($this->artifacts);  
   #   $dig->tasks->getTasksFromExcavations();
-  #   $this->assertGreaterThan(1, $dig->tasks->total);
+  #   $this->assertGreaterThan(1, $dig->tasks->total);   
+  #   unset($dig);
   # }  
   # 
   # public function testStatusInstance()
   # {             
-  #   $dig = new \forge\dig\Dig($this->artifacts);
-  #   $this->assertInstanceOf('Status', $dig->status); 
+  #   $dig = new \forge\core\Dig($this->artifacts);
+  #   $this->assertInstanceOf('forge\core\dig\Status', $dig->status); 
   #   unset($dig);       
   # }  
   # 
   # public function testSerialize()
   # {
-  #   $this->dig->serialize();
+  #   $this->dig->status->serialize();
   #   $this->assertTrue(file_exists(FORGE_TMP_PATH . DS . 'dig_status'));
   # } 
   # 
   # public function testHasExcavations()
   # {  
-  #   $dig = new \forge\dig\Dig($this->artifacts);
-  #   $dig->ex->addAll();    
+  #   $dig = new \forge\core\Dig($this->artifacts);
   #   $this->assertGreaterThan(0, count($dig->ex->excavations));    
   #   unset($dig);
   # }   
   
-  # public function testRunDig()
-  # {
-  #   $this->dig->run();
-  #   $this->assertTrue($this->dig->status->finished);
-  #   $this->assertTrue(\forge\excavator\Installer::installedArtifacts($this->artifacts));
-  # }    
+  public function testRunDig()
+  {
+    #$this->dig->run();
+    #$this->assertTrue($this->dig->status->finished);
+    $this->assertTrue(\forge\excavate\Installer::installedArtifacts(array($this->componentMock)));
+  }    
   # 
   # public function testPause()
   # {

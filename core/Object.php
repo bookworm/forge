@@ -6,16 +6,6 @@ class Object
 {              
   public $log;
   
-  public static function &getInstance()
-  {
-    static $instance; 
-
-    if(!is_object($instance))
-      $instance = new self();   
-
-    return $instance;
-  }  
-  
   public function tmpPath()
   {
     return FORGE_TMP_PATH;

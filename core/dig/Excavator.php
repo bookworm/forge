@@ -15,16 +15,20 @@ class Excavator extends \forge\core\Object
   public $artifacts = array();    
   public $excavations = array();
   public $failed = array();   
-  public $on; 
+  public $on = null; 
   public $dig; 
   
   public function __construct($dig, $artifacts)
   {           
     $this->dig = $dig;
     $this->artifacts = $artifacts;
-    $this->_addAll(); 
-  }      
+  }    
   
+  public function _init()
+  {
+    $this->_addAll(); 
+  }
+   
   public function _addAll()
   {
     foreach($this->artifacts as $artifact) {
@@ -33,10 +37,10 @@ class Excavator extends \forge\core\Object
   }
   
   public function add($artifact)
-  {   
+  {                             
     if(!$this->completed($artifact))
     { 
-      if($artifact->ext_name == 'JCore') 
+      if($artifact->slug == 'JCore') 
         $this->excavations[] = $this->create($artifact, array('shouldRetrievePackage' => false));
       else                                  
         $this->excavations[] = $this->create($artifact);       
@@ -45,8 +49,10 @@ class Excavator extends \forge\core\Object
   
   public function create($artifact)
   {                           
-    $classPath = $this->classPath($artifact);
-    return new $classPath($artifact, $this->dig->tasks->total);
+    $classPath = $this->classPath($artifact);       
+    $ex = new $classPath($artifact, $this->dig);      
+    $ex->setup();   
+    return $ex;
   }     
   
   public function classPath($artifact)
@@ -70,8 +76,8 @@ class Excavator extends \forge\core\Object
   }
   
   public function completed($artifact)
-  {
-    return file_exists($this->tmpPath() . DS . 'Excavation' . '_' . $artifact->ext_name . '_completed');
+  {                    
+    return file_exists($this->tmpPath() . DS . 'Excavation' . '_' . $artifact->slug . '_completed');
   }  
 
   public function append($artifact)
@@ -82,6 +88,6 @@ class Excavator extends \forge\core\Object
  
   public function failed($excavation)
   {    
-    return $this->status->failedExcavation($excavation);
+    return $this->dig->status->failedExcavation($excavation);
   }
 }

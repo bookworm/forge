@@ -52,7 +52,7 @@ class Component extends \forge\excavate\Excavator
  	public function _taskSetPaths()
  	{
  	  $db             = $this->getDbo();
-		$this->manifest = $this->getManifest();
+		$this->manifest = $this->getManifest();     
 
 		$name = strtolower(\JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
 		if(substr($name, 0, 4) == "com_")
@@ -66,14 +66,15 @@ class Component extends \forge\excavate\Excavator
 		$this->set('message', \JText::_((string) $this->manifest->description));
 
 		$this->setPath('extension_site', \JPath::clean(JPATH_SITE . '/components/' . $this->get('element')));
-		$this->setPath('extension_administrator', \JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));
-
+		$this->setPath('extension_administrator', \JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));  
 		$this->setPath('extension_root', $this->getPath('extension_administrator'));
 
 		if(!$this->manifest->administration) {
 			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_COMP_INSTALL_ADMIN_ELEMENT'));
 			return false;
-		}
+		}  
+		
+		return true;
  	}
  	
  	protected function _buildAdminMenus()

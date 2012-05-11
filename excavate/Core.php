@@ -32,18 +32,14 @@ class Core extends \forge\excavate\ExcavateAbstract
   
   public function __construct()
   {       
-    parent::__construct();
-    $this->log = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);   
-    $this->parent = $self;         
-    $this->installer = new Installer($this);
-    var_dump($this->installer);
+    $this->log = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);           
   }     
 
-  public function _init()
+  public function setup()
   {        
-    if($this->upgrade)
+    if(isset($this->artifact->update))
       return $this->setupUpdate();
-    else if($this->uninstall)
+    else if(isset($this->artifact->uninstall))
       return $this->setupUninstall();    
     else
       return $this->setupInstall();
@@ -51,19 +47,24 @@ class Core extends \forge\excavate\ExcavateAbstract
   
   public function setupUninstall()
   {   
-    if(JVERSION_SHORT == '1.7') 
-      $this->eid = $this->jinstallerhelper->getExtensionId($this->artifact);   
+    $this->eid = \JInstallerHelper::getExtensionId($this->artifact->db_name);   
               
 		return true;
   } 
 
   public function setupInstall()
   {
-		if(!$this->installer->findManifest($this->getPath('source')))
-			return false;
-
+		# if(!$this->installer->findManifest($this->getPath('source')))
+		# 	return false;
+    # 
 		return true;
-	}            
+	}    
+	
+	public function setupUpdate()
+	{
+  	$this->setOverwrite(true);       
+  	$this->setUpgrade(true);
+	}        
 	
   public function getPath($name, $default=null)
   {
@@ -76,8 +77,9 @@ class Core extends \forge\excavate\ExcavateAbstract
   }   
  
   public function retrievePackage()
-  {  
-    $this->package = \forge\installer\Package::retrievePackage($this->artifact); 
+  {                             
+    $packag_handler = \forge\installer\Package::getInstance();
+    $this->package = $packag_handler->retrievePackage($this->artifact); 
 
     if($this->package == false)
       return false;
@@ -101,7 +103,8 @@ class Core extends \forge\excavate\ExcavateAbstract
        }  
     } 
 
-    $this->_init();  
+    if(method_exists($this, '_init')) 
+      $this->_init();  
 
     $this->executeTasks();  
     return $this->success;    
@@ -124,11 +127,11 @@ class Core extends \forge\excavate\ExcavateAbstract
         switch($rollback['type']) 
         {
           case 'file' :
-  					$stepval = \JFile::delete($step['path']);
+  					$stepval = \JFile::delete($rollback['path']);
   					break;
 
   				case 'folder' :
-  					$stepval = \JFolder::delete($step['path']);
+  					$stepval = \JFolder::delete($rollback['path']);
   					break;
 
   				case 'query' :
@@ -142,7 +145,7 @@ class Core extends \forge\excavate\ExcavateAbstract
 
   					$query = 'DELETE' .
   							' FROM `#__extensions`' .
-  							' WHERE extension_id = '.(int)$step['id'];
+  							' WHERE extension_id = '.(int) $rollback['id'];
   					$db->setQuery($query);
   					$stepval = $db->Query();
 
@@ -158,7 +161,7 @@ class Core extends \forge\excavate\ExcavateAbstract
  **/ 
  
   public function getDbo()
-  {
+  {  
     return \JFactory::getDbo();
   }     
          

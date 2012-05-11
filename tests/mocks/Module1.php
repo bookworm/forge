@@ -3,7 +3,8 @@
 class ModuleMock1
 {
   public $name              = 'Demo Module1';
-  public $ext_name          = 'Demo Module1'; 
+  public $ext_name          = 'Demo Module1';             
+  public $db_name           = 'Demo Module1'; 
   public $slug              = 'mod_demo1';
   public $type              = 'module';
   public $desc              = 'Awesome module1 desc';

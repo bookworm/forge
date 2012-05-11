@@ -3,7 +3,8 @@
 class TemplateMock
 {
   public $name              = 'Demo Template';
-  public $ext_name          = 'Demo Template';   
+  public $ext_name          = 'Demo Template';  
+  public $db_name           = 'Demo Template';   
   public $slug              = 'template_demo';
   public $type              = 'template';
   public $desc              = 'Awesome demo template desc';

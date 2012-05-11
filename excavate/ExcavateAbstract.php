@@ -47,7 +47,7 @@ class ExcavateAbstract extends \forge\core\Object
     return $this; 
   }    
   
-  public function getTasks()
+  public function tasks()
   {
     foreach($this->classMethods as $methodName) 
     {  
@@ -69,7 +69,7 @@ class ExcavateAbstract extends \forge\core\Object
   {     
     foreach($this->tasks as $key => $task) 
     { 
-      $timer = Timer::getInstance();  
+      $timer = \forge\core\Timer::getInstance();  
       if($timer->getTimeLeft() > 0)
       {
         if(!$this->executeTask($task) == false)
@@ -121,10 +121,10 @@ class ExcavateAbstract extends \forge\core\Object
       $arg = $this->artifact;  
       
     $this->log->logInfo("Executing task $taskName. For: ". $this->artifact->name); 
-    $result = call_user_func_array(array($this->excavateClass, $taskName), $arg); 
+    $result = call_user_func_array(array($this, $taskName), array($arg)); 
 
     if(!$result) {
-      $this->setErrorMessage($this->excavateClass->errorMSG);
+      $this->setErrorMessage($this->msg);
       return false;   
     }  
     else {

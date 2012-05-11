@@ -10,7 +10,7 @@ class Component extends \forge\excavate\cores\Component
   { 
     if(!$this->_taskSetPaths())      
       return false;      
-    
+      
     if(!$this->manifest->administration) {
 			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_COMP_INSTALL_ADMIN_ELEMENT'));
 			return false;
@@ -135,10 +135,10 @@ class Component extends \forge\excavate\cores\Component
   }   
   
   public function task_parseAdminFiles()
-  {
+  {       
     if($this->manifest->administration->files)
-		{
-			if($this->parseFiles($this->manifest->administration->files, 1) === false) {
+		{  
+			if($this->parseFiles($this->manifest->administration->files, 1) === false) {   
 				$this->abort();
 				return false;
 			}
@@ -223,15 +223,17 @@ class Component extends \forge\excavate\cores\Component
   }  
   
   public function task_parseSQLManifest()
-  {
+  {         
+    $db = $this->getDbo();      
+		
     if(isset($this->manifest->install->sql))
-		{
-			$utfresult = $this->parseSQLFiles($this->manifest->install->sql);
-
-			if($utfresult === false) {
-				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_INSTALL_SQL_ERROR', $db->stderr(true)));
-				return false;
-			}
+		{         
+			$utfresult = $this->parseSQLFiles($this->manifest->install->sql);   
+    
+		  if($utfresult === false) {     
+		  	$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_INSTALL_SQL_ERROR', $db->stderr(true)));
+		  	return false;
+		  }
 		} 
 		
 		return true;
@@ -311,7 +313,7 @@ class Component extends \forge\excavate\cores\Component
   
   public function task_setEID()
   {                
-    $db        = $this->db;
+    $db        = $this->getDbo();
     $eid       = $db->insertid();  
     $this->eid = $eid;
 
@@ -345,13 +347,15 @@ class Component extends \forge\excavate\cores\Component
   public function task_setSchemaVersion()
   {
     if($this->manifest->update)
-			$this->setSchemaVersion($this->manifest->update->schemas, $eid);
+			$this->setSchemaVersion($this->manifest->update->schemas, $this->eid);
 			
 		return true;
   }   
   
   public function task_assetDB()
-  {      
+  {                         
+    $db = $this->getDbo();
+    
     $row              = $this->row;
     $asset            = \JTable::getInstance('Asset');
 		$asset->name      = $row->element;

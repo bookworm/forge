@@ -69,14 +69,14 @@ class File extends \forge\excavate\Excavator
 					continue;
 
 				$folderName .= '/' . $dir;
-				if(!JFolder::exists($folderName))
+				if(!\JFolder::exists($folderName))
 					array_push($this->folderList, $folderName);
 			}
 
 			$sourceFolder = empty($folder) ? $packagePath : $packagePath . '/' . $folder;
 			$targetFolder = empty($target) ? $jRootPath : $jRootPath . '/' . $target;
 
-			if(!JFolder::exists($sourceFolder)) {
+			if(!\JFolder::exists($sourceFolder)) {
 				\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ABORT_FILE_INSTALL_FAIL_SOURCE_DIRECTORY', $sourceFolder));
 				$this->abort();
 				return false;
@@ -101,7 +101,7 @@ class File extends \forge\excavate\Excavator
 			}
 			else
 			{
-				$files = JFolder::files($sourceFolder);
+				$files = \JFolder::files($sourceFolder);
 				foreach($files as $file)
 				{
 					$path['src']  = $sourceFolder . '/' . $file;
@@ -211,9 +211,9 @@ class File extends \forge\excavate\Excavator
 
 		foreach($this->folderList as $folder)
 		{
-			if(!JFolder::exists($folder))
+			if(!\JFolder::exists($folder))
 			{
-				if(!$created = JFolder::create($folder))
+				if(!$created = \JFolder::create($folder))
 				{
 					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ABORT_FILE_INSTALL_FAIL_SOURCE_DIRECTORY', $folder));
 					$this->abort();

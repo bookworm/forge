@@ -3,7 +3,8 @@
 class LibraryMock
 {
   public $name              = 'Demo Library';
-  public $ext_name          = 'Demo Library';    
+  public $ext_name          = 'Demo Library';  
+  public $db_name          = 'Demo Library';    
   public $slug              = 'lib_demo';
   public $type              = 'library';
   public $desc              = 'Awesome demo library desc';

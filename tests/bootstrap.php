@@ -12,7 +12,7 @@ define('_JEXEC', 1);
 
 // Setup the path related constants.
 define('DS',					DIRECTORY_SEPARATOR);
-define('JPATH_BASE',		 '/Users/kenerickson/Sites/joomla25');
+define('JPATH_BASE',		 '/Users/kenerickson/Sites/forgesandbox');
 define('JPATH_ROOT',			JPATH_BASE);
 define('JPATH_SITE',			JPATH_ROOT);
 define('JPATH_CONFIGURATION',	JPATH_ROOT);
@@ -34,7 +34,7 @@ jimport('joomla.language.language');
 jimport('joomla.utilities.string');     
 
 if(!defined('FORGE_TMP_PATH'))
-  define('FORGE_TMP_PATH', JPATH_ROOT.DS.'tmp');
+  define('FORGE_TMP_PATH', JPATH_ROOT.DS.'tmp'.DS.'forge');
 
 // Instantiate the application.
 # $app = \JFactory::getApplication('site');

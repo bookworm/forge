@@ -156,4 +156,8 @@ Dig class:
     > module    
     > module 2
     > plugin 
-    > template
+    > template   
+    
+> need to serialize excavations without certain shit. magic method?
+- make sure wakeup on a excavation is correct. 
+  probably need to re-initialize stuff in __wakeup    

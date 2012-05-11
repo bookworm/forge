@@ -3,7 +3,8 @@
 class PluginMock
 {
   public $name              = 'Demo Plugin';
-  public $ext_name          = 'Demo Plugin';   
+  public $ext_name          = 'Demo Plugin';        
+  public $db_name           = 'Demo Plugin'; 
   public $slug              = 'plugin_demo';
   public $type              = 'plugin';
   public $desc              = 'Awesome demo plugin desc';
