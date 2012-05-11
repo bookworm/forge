@@ -883,7 +883,7 @@ class Installer extends \forge\core\Object
 	  return true;
 	}  
 	
-	public function getExtensionID($type, $id, $client, $group) 
+	public static function getExtensionID($type, $id, $client, $group) 
 	{
 	  $db = $this->parent->getDbo();
 		$result = $id;
