@@ -37,7 +37,7 @@ if(!defined('FORGE_TMP_PATH'))
   define('FORGE_TMP_PATH', JPATH_ROOT.DS.'tmp');
 
 // Instantiate the application.
-# $app = JFactory::getApplication('site');
+# $app = \JFactory::getApplication('site');
 
 // Initialise the application.
 # $app->initialise();

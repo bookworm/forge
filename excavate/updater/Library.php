@@ -11,7 +11,7 @@ class Library extends \forge\excavate\cores\Library
     $this->manifest = $this->getManifest();
 
 		$name    = (string) $this->manifest->name;
-		$name    = JFilterInput::getInstance()->clean($name, 'string');
+		$name    = \JFilterInput::getInstance()->clean($name, 'string');
 		$element = str_replace('.xml', '', basename($this->getPath('manifest')));
 		$this->set('name', $name);
 		$this->set('element', $element);
@@ -26,7 +26,7 @@ class Library extends \forge\excavate\cores\Library
 		$result = $db->loadResult(); 
 		
 		if($result) {
-		  $installer = new JInstaller; 
+		  $installer = new \JInstaller; 
 			$installer->uninstall('library', $result);
 		}
 			

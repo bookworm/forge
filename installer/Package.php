@@ -83,7 +83,7 @@ class Package extends \forge\core\Object
       $contents .= fread($inputHandle, 4096);
     }
 
-    JFile::write($target, $contents);
+    \JFile::write($target, $contents);
     fclose($inputHandle);      
     unset($contents);            
 
@@ -98,10 +98,10 @@ class Package extends \forge\core\Object
     $archivename = $filename;
     $tmpdir      = uniqid('install_');  
 
-    $extractdir  = JPath::clean(FORGE_TMP_PATH.DS.'installation'.DS.$artifact->ext_name);
-    $archivename = JPath::clean($archivename);  
+    $extractdir  = \JPath::clean(FORGE_TMP_PATH.DS.'installation'.DS.$artifact->ext_name);
+    $archivename = \JPath::clean($archivename);  
 
-    $result = JArchive::extract( $archivename, $extractdir);   
+    $result = \JArchive::extract( $archivename, $extractdir);   
 
     if($result == false) {  
       $log->logError("Failed to extract ". $artifact->name . "from $filename");      
@@ -111,11 +111,11 @@ class Package extends \forge\core\Object
     $retval['extractdir'] = $extractdir;
     $retval['packagefile'] = $archivename;
 
-    $dirList = array_merge(JFolder::files($extractdir, ''), JFolder::folders($extractdir, ''));
+    $dirList = array_merge(\JFolder::files($extractdir, ''), \JFolder::folders($extractdir, ''));
 
     if(count($dirList) == 1) {
-      if(JFolder::exists($extractdir.DS.$dirList[0]))
-        $extractdir = JPath::clean($extractdir.DS.$dirList[0]);
+      if(\JFolder::exists($extractdir.DS.$dirList[0]))
+        $extractdir = \JPath::clean($extractdir.DS.$dirList[0]);
     }  
 
     $retval['dir'] = $extractdir;    

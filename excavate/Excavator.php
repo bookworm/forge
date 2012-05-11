@@ -125,7 +125,7 @@ class Excavator extends \forge\excavate\Core
   
   public function generateManifestCache()
 	{
-		return json_encode(JApplicationHelper::parseXMLInstallFile($this->getPath('manifest')));
+		return json_encode(\JApplicationHelper::parseXMLInstallFile($this->getPath('manifest')));
 	} 
 	
 	public function loadMD5Sum($filename)

@@ -10,14 +10,14 @@ class File extends \forge\excavate\cores\File
  	{         
  	  $id = $this->eid;
  	  
- 		$row = JTable::getInstance('extension');
+ 		$row = \JTable::getInstance('extension');
  		if(!$row->load($id)) {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_LOAD_ENTRY'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_LOAD_ENTRY'));
  			return false;
  		}
 
  		if($row->protected) {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_WARNCOREFILE'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_WARNCOREFILE'));
  			return false;
  		}
 
@@ -28,15 +28,15 @@ class File extends \forge\excavate\cores\File
  		{
  			$this->setPath('extension_root', JPATH_ROOT); // . '/files/' . $manifest->filename);
 
- 			$xml = JFactory::getXML($manifestFile);
+ 			$xml = \JFactory::getXML($manifestFile);
 
  			if(!$xml) {
- 				JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_LOAD_MANIFEST'));
+ 				\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_LOAD_MANIFEST'));
  				return false;
  			}
 
  			if($xml->getName() != 'extension') {
- 				JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_INVALID_MANIFEST'));
+ 				\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_INVALID_MANIFEST'));
  				return false;
  			}
 
@@ -71,11 +71,11 @@ class File extends \forge\excavate\cores\File
 
  			$utfresult = $this->parseSQLFiles($this->manifest->uninstall->sql);
  			if($utfresult === false) {
- 				JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_SQL_ERROR', $db->stderr(true)));
+ 				\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_SQL_ERROR', $db->stderr(true)));
  				$retval = false;
  			}
 
- 			$db = JFactory::getDbo();
+ 			$db = \JFactory::getDbo();
  			$query = $db->getQuery(true);
  			$query->delete()
  				->from('#__schemas')
@@ -84,7 +84,7 @@ class File extends \forge\excavate\cores\File
  			$db->Query();
 
  			$packagePath = $this->getPath('source');
- 			$jRootPath   = JPath::clean(JPATH_ROOT);
+ 			$jRootPath   = \JPath::clean(JPATH_ROOT);
 
  			foreach($xml->fileset->files as $eFiles)
  			{
@@ -105,25 +105,25 @@ class File extends \forge\excavate\cores\File
  							$folderList[] = $targetFolder . '/' . $eFileName;
  						else {
  							$fileName = $targetFolder . '/' . $eFileName;
- 							JFile::delete($fileName);
+ 							\JFile::delete($fileName);
  						}
  					}
  				}
 
  				foreach($folderList as $folder)
  				{
- 					$files = JFolder::files($folder);
+ 					$files = \JFolder::files($folder);
  					if(!count($files))
- 						JFolder::delete($folder);
+ 						\JFolder::delete($folder);
  				}
  			}
 
- 			JFile::delete($manifestFile);
+ 			\JFile::delete($manifestFile);
 
  		}
  		else
  		{
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_FILE_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
  			$row->delete();
  			return false;
  		}

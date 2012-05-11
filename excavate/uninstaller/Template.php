@@ -14,17 +14,17 @@ class Template extends \forge\excavate\cores\Template
   
   public function task_uninstall()
 	{            
-	  $id = $this->eid;
+	  $id     = $this->eid;
 		$retval = true;
-		$row = JTable::getInstance('extension');
+		$row     = \JTable::getInstance('extension');
 
 		if(!$row->load((int) $id) || !strlen($row->element)) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_ERRORUNKOWNEXTENSION'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_ERRORUNKOWNEXTENSION'));
 			return false;
 		}
 
 		if($row->protected) {
-			JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_WARNCORETEMPLATE', $row->name));
+			\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_WARNCORETEMPLATE', $row->name));
 			return false;
 		}
 
@@ -32,7 +32,7 @@ class Template extends \forge\excavate\cores\Template
 		$clientId = $row->client_id;
 
 		if(!$name) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_TEMPLATE_ID_EMPTY'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_TEMPLATE_ID_EMPTY'));
 			return false;
 		}
 
@@ -41,14 +41,14 @@ class Template extends \forge\excavate\cores\Template
 		$db->setQuery($query);
 
 		if($db->loadResult() != 0) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_TEMPLATE_DEFAULT'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_TEMPLATE_DEFAULT'));
 			return false;
 		}
 
-		$client = JApplicationHelper::getClientInfo($clientId);
+		$client = \JApplicationHelper::getClientInfo($clientId);
 
 		if(!$client) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_INVALID_CLIENT'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_INVALID_CLIENT'));
 			return false;
 		}
 
@@ -57,23 +57,23 @@ class Template extends \forge\excavate\cores\Template
 
 		$this->findManifest();
 		$manifest = $this->getManifest();
-		if(!($manifest instanceof JXMLElement))
+		if(!($manifest instanceof \JXMLElement))
 		{
 			$row->delete($row->extension_id);
 			unset($row);
 
-			JFolder::delete($this->getPath('extension_root'));
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
+			\JFolder::delete($this->getPath('extension_root'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
 			return false;
 		}
 
 		$this->removeFiles($manifest->media);
 		$this->removeFiles($manifest->languages, $clientId);
 
-		if(JFolder::exists($this->getPath('extension_root')))
-			$retval = JFolder::delete($this->getPath('extension_root'));
+		if(\JFolder::exists($this->getPath('extension_root')))
+			$retval = \JFolder::delete($this->getPath('extension_root'));
 		else {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_TEMPLATE_DIRECTORY'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_TPL_UNINSTALL_TEMPLATE_DIRECTORY'));
 			$retval = false;
 		}
 

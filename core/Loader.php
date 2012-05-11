@@ -10,10 +10,6 @@ class Loader extends \forge\core\Object
 {    
   public $classes = array();
   
-  public function __construct()
-  {
-  }   
-  
   public static function &getInstance()
   {
     static $instance; 

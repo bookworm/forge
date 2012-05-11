@@ -85,7 +85,7 @@ class Module extends \forge\excavate\cores\Module
   public function taask_copyManifest()
   {
     if(!$this->copyManifest(-1)) {
-			$this->abort(JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_COPY_SETUP'));
+			$this->abort(\JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_COPY_SETUP'));
 			return false;
 		}
 		

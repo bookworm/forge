@@ -53,7 +53,7 @@ class Dig extends \forge\core\Object
   
   public function restart()
   {      
-    JFile::delete($this->tmpPath() . DS .'dig_restart_needed');           
+    \JFile::delete($this->tmpPath() . DS .'dig_restart_needed');           
     
     $unserialized = $this->status->unserialized();  
     
@@ -100,7 +100,7 @@ class Dig extends \forge\core\Object
   
   public function finish()
   {
-    $files = JFolder::files($this->tmpPath() . DS .'excavations', '_start');
+    $files = \JFolder::files($this->tmpPath() . DS .'excavations', '_start');
 
     if(!empty($files) AND empty($this->ex->artifacts))
     {       
@@ -123,15 +123,15 @@ class Dig extends \forge\core\Object
  	{
  	 if($eid)
  		{
- 			$this->extension = JTable::getInstance('extension');
+ 			$this->extension = \JTable::getInstance('extension');
 
       if(!$this->extension->load($eid)) {
-        $this->abort(JText::_('JLIB_INSTALLER_ABORT_LOAD_DETAILS'));
+        $this->abort(\JText::_('JLIB_INSTALLER_ABORT_LOAD_DETAILS'));
         return false; 
       }
 
       if($this->extension->state == -1) {
-        $this->abort(JText::_('JLIB_INSTALLER_ABORT_REFRESH_MANIFEST_CACHE'));
+        $this->abort(\JText::_('JLIB_INSTALLER_ABORT_REFRESH_MANIFEST_CACHE'));
         return false; 
       }
       

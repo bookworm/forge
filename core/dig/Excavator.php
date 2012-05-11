@@ -63,10 +63,7 @@ class Excavator extends \forge\core\Object
     else         
       $classPath .= 'installer';
 
-    $classPath .= "\\$className";    
-    # .'_V'.substr(JVERSION, 0, 3)
-                    
-    echo $classPath;
+    $classPath .= "\\$className";                        
     $loader->loadClass($classPath);   
     
     return 'forge\\'.$classPath;

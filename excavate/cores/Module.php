@@ -37,7 +37,7 @@ class Module extends \forge\excavate\Excavator
 
 			if($extension)
 			{
-				$lang   = JFactory::getLanguage();
+				$lang   = \JFactory::getLanguage();
 				$source = $path ? $path : ($this->extension->client_id ? JPATH_ADMINISTRATOR : JPATH_SITE) . '/modules/' . $extension;
 				$folder = (string) $element->attributes()->folder;
 
@@ -56,15 +56,15 @@ class Module extends \forge\excavate\Excavator
 	public function discover()
 	{
 		$results    = array();
-		$site_list  = JFolder::folders(JPATH_SITE . '/modules');
-		$admin_list = JFolder::folders(JPATH_ADMINISTRATOR . '/modules');
-		$site_info  = JApplicationHelper::getClientInfo('site', true);
-		$admin_info = JApplicationHelper::getClientInfo('administrator', true);
+		$site_list  = \JFolder::folders(JPATH_SITE . '/modules');
+		$admin_list = \JFolder::folders(JPATH_ADMINISTRATOR . '/modules');
+		$site_info  = \JApplicationHelper::getClientInfo('site', true);
+		$admin_info = \JApplicationHelper::getClientInfo('administrator', true);
 
 		foreach($site_list as $module)
 		{
-			$manifest_details = JApplicationHelper::parseXMLInstallFile(JPATH_SITE . "/modules/$module/$module.xml");
-			$extension = JTable::getInstance('extension');
+			$manifest_details = \JApplicationHelper::parseXMLInstallFile(JPATH_SITE . "/modules/$module/$module.xml");
+			$extension = \JTable::getInstance('extension');
 			$extension->set('type', 'module');
 			$extension->set('client_id', $site_info->id);
 			$extension->set('element', $module);
@@ -76,8 +76,8 @@ class Module extends \forge\excavate\Excavator
 
 		foreach($admin_list as $module)
 		{
-			$manifest_details = JApplicationHelper::parseXMLInstallFile(JPATH_ADMINISTRATOR . "/modules/$module/$module.xml");
-			$extension = JTable::getInstance('extension');
+			$manifest_details = \JApplicationHelper::parseXMLInstallFile(JPATH_ADMINISTRATOR . "/modules/$module/$module.xml");
+			$extension = \JTable::getInstance('extension');
 			$extension->set('type', 'module');
 			$extension->set('client_id', $admin_info->id);
 			$extension->set('element', $module);
@@ -92,18 +92,18 @@ class Module extends \forge\excavate\Excavator
 	
 	public function discover_install()
 	{
-		$client       = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client       = \JApplicationHelper::getClientInfo($this->extension->client_id);
 		$manifestPath = $client->path . '/modules/' . $this->extension->element . '/' . $this->extension->element . '.xml';
 		$this->manifest = $this->isManifest($manifestPath);
 		$description = (string) $this->manifest->description;
 
 		if($description)
-			$this->set('message', JText::_($description));
+			$this->set('message', \JText::_($description));
 		else
 			$this->set('message', '');
 
 		$this->setPath('manifest', $manifestPath);
-		$manifest_details = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->state          = 0;
@@ -114,26 +114,26 @@ class Module extends \forge\excavate\Excavator
 		if($this->extension->store())
 			return $this->extension->get('extension_id');
 		else {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_MOD_DISCOVER_STORE_DETAILS'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_MOD_DISCOVER_STORE_DETAILS'));
 			return false;
 		}
 	}  
 	
 	public function refreshManifestCache()
 	{
-		$client         = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client         = \JApplicationHelper::getClientInfo($this->extension->client_id);
 		$manifestPath   = $client->path . '/modules/' . $this->extension->element . '/' . $this->extension->element . '.xml';
 		$this->manifest = $this->isManifest($manifestPath); 
 		
 		$this->setPath('manifest', $manifestPath);
-		$manifest_details                = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details                = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->name           = $manifest_details['name'];
 
 		if($this->extension->store())
 			return true;
 		else {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_MOD_REFRESH_MANIFEST_CACHE'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_MOD_REFRESH_MANIFEST_CACHE'));
 			return false;
 		}
 	}   
@@ -173,21 +173,21 @@ class Module extends \forge\excavate\Excavator
 		$this->manifest = $this->getManifest();
 
 		$name = (string) $this->manifest->name;
-		$name = JFilterInput::getInstance()->clean($name, 'string');
+		$name = \JFilterInput::getInstance()->clean($name, 'string');
 		$this->set('name', $name);
 
 		$description = (string) $this->manifest->description;
 		if($description)
-			$this->set('message', JText::_($description));
+			$this->set('message', \JText::_($description));
 		else
 			$this->set('message', '');
 
 		if($cname = (string) $this->manifest->attributes()->client)
 		{
-			$client = JApplicationHelper::getClientInfo($cname, true);
+			$client = \JApplicationHelper::getClientInfo($cname, true);
 
 			if($client === false) {
-				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_MOD_UNKNOWN_CLIENT', JText::_('JLIB_INSTALLER_' . $this->route), $client->name));
+				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_UNKNOWN_CLIENT', \JText::_('JLIB_INSTALLER_' . $this->route), $client->name));
 				return false;
 			}
 
@@ -218,7 +218,7 @@ class Module extends \forge\excavate\Excavator
 		if(!empty($element))
 			$this->setPath('extension_root', $basePath . '/modules/' . $element);
 		else {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_MOD_INSTALL_NOFILE', JText::_('JLIB_INSTALLER_' . $this->route)));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_INSTALL_NOFILE', \JText::_('JLIB_INSTALLER_' . $this->route)));
 			return false;
 		}   
 		
@@ -237,7 +237,7 @@ class Module extends \forge\excavate\Excavator
 			$db->Query();
 		}
 		catch(JException $e) {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_MOD_ROLLBACK', JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true)));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_ROLLBACK', \JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true)));
 			return false;
 		}
 
@@ -264,8 +264,8 @@ class Module extends \forge\excavate\Excavator
 			elseif(!$this->getOverwrite())
 			{
 				$this->abort(
-					JText::sprintf(
-						'JLIB_INSTALLER_ABORT_MOD_INSTALL_DIRECTORY', JText::_('JLIB_INSTALLER_' . $this->route),
+					\JText::sprintf(
+						'JLIB_INSTALLER_ABORT_MOD_INSTALL_DIRECTORY', \JText::_('JLIB_INSTALLER_' . $this->route),
 						$this->getPath('extension_root')
 					)
 				);
@@ -308,7 +308,7 @@ class Module extends \forge\excavate\Excavator
 		if($this->manifestClass && method_exists($this->manifestClass, 'preflight'))
 		{
 			if($this->manifestClass->preflight($this->route, $this) === false) {
-				$this->abort(JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_CUSTOM_INSTALL_FAILURE'));
+				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_CUSTOM_INSTALL_FAILURE'));
 				return false;
 			}
 		}
@@ -324,11 +324,11 @@ class Module extends \forge\excavate\Excavator
     $created = false;
 		if(!file_exists($this->getPath('extension_root')))
 		{
-			if(!$created = JFolder::create($this->getPath('extension_root')))
+			if(!$created = \JFolder::create($this->getPath('extension_root')))
 			{
 				$this->abort(
-					JText::sprintf(
-						'JLIB_INSTALLER_ABORT_MOD_INSTALL_CREATE_DIRECTORY', JText::_('JLIB_INSTALLER_' . $this->route),
+					\JText::sprintf(
+						'JLIB_INSTALLER_ABORT_MOD_INSTALL_CREATE_DIRECTORY', \JText::_('JLIB_INSTALLER_' . $this->route),
 						$this->getPath('extension_root')
 					)
 				);
@@ -363,7 +363,7 @@ class Module extends \forge\excavate\Excavator
 			if(!file_exists($path['dest']) || $this->getOverwrite())
 			{
 				if(!$this->copyFiles(array($path))) {
-					$this->abort(JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_MANIFEST'));
+					$this->abort(\JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_MANIFEST'));
 					return false;
 				}
 			}
@@ -374,7 +374,7 @@ class Module extends \forge\excavate\Excavator
   
   public function _taskInsertRowDBStuff()
   {
-    $row = JTable::getInstance('extension');    
+    $row = \JTable::getInstance('extension');    
     $id  = $this->eid;  
     
 		if($id)
@@ -384,7 +384,7 @@ class Module extends \forge\excavate\Excavator
 			$row->manifest_cache = $this->generateManifestCache(); 
 
 			if(!$row->store()) {
-				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_MOD_ROLLBACK', JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true)));
+				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_ROLLBACK', \JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true)));
 				return false;
 			}
 		}
@@ -403,7 +403,7 @@ class Module extends \forge\excavate\Excavator
 			$row->set('manifest_cache', $this->generateManifestCache());
 
 			if(!$row->store()) {
-				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_MOD_ROLLBACK', JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true)));
+				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_ROLLBACK', \JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true)));
 				return false;
 			}
 
@@ -411,8 +411,8 @@ class Module extends \forge\excavate\Excavator
 
 			$this->pushStep(array('type' => 'extension', 'extension_id' => $row->extension_id));
 
-			$name = preg_replace('#[\*?]#', '', JText::_($this->get('name')));
-			$module = JTable::getInstance('module');
+			$name = preg_replace('#[\*?]#', '', \JText::_($this->get('name')));
+			$module = \JTable::getInstance('module');
 			$module->set('title', $name);
 			$module->set('module', $this->get('element'));
 			$module->set('access', '1');
@@ -439,7 +439,7 @@ class Module extends \forge\excavate\Excavator
 			if($utfresult === false)
 			{
 				$this->abort(
-					JText::sprintf('JLIB_INSTALLER_ABORT_MOD_INSTALL_SQL_ERROR', JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true))
+					\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_INSTALL_SQL_ERROR', \JText::_('JLIB_INSTALLER_' . $this->route), $db->stderr(true))
 				);
 
 				return false;
@@ -454,7 +454,7 @@ class Module extends \forge\excavate\Excavator
 			{
 				$result = $this->parseSchemaUpdates($this->manifest->update->schemas, $row->extension_id);
 				if($result === false) {
-					$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_MOD_UPDATE_SQL_ERROR', $db->stderr(true)));
+					$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_UPDATE_SQL_ERROR', $db->stderr(true)));
 					return false;
 				}
 			}
@@ -471,7 +471,7 @@ class Module extends \forge\excavate\Excavator
 		if($this->manifestClass && method_exists($this->manifestClass, $this->route))
 		{
 			if($this->manifestClass->{$this->route}($this) === false) {
-				$this->abort(JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_CUSTOM_INSTALL_FAILURE'));
+				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_MOD_INSTALL_CUSTOM_INSTALL_FAILURE'));
 				return false;
 			}
 		}

@@ -19,14 +19,14 @@ class Component extends \forge\excavate\Excavator
  		}
 
  		$this->manifest = $this->getManifest();
- 		$name = strtolower(JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
+ 		$name = strtolower(\JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
 
  		if(substr($name, 0, 4) == "com_")
  			$extension = $name;
  		else
  			$extension = "com_$name";
 
- 		$lang   = JFactory::getLanguage();
+ 		$lang   = \JFactory::getLanguage();
  		$source = $path ? $path : ($this->extension->client_id ? JPATH_ADMINISTRATOR : JPATH_SITE) . '/components/' . $extension;
 
  		if($this->manifest->administration->files)
@@ -54,7 +54,7 @@ class Component extends \forge\excavate\Excavator
  	  $db             = $this->getDbo();
 		$this->manifest = $this->getManifest();
 
-		$name = strtolower(JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
+		$name = strtolower(\JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
 		if(substr($name, 0, 4) == "com_")
 			$element = $name;
 		else
@@ -63,15 +63,15 @@ class Component extends \forge\excavate\Excavator
 		$this->set('name', $name);
 		$this->set('element', $element);
 
-		$this->set('message', JText::_((string) $this->manifest->description));
+		$this->set('message', \JText::_((string) $this->manifest->description));
 
-		$this->setPath('extension_site', JPath::clean(JPATH_SITE . '/components/' . $this->get('element')));
-		$this->setPath('extension_administrator', JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));
+		$this->setPath('extension_site', \JPath::clean(JPATH_SITE . '/components/' . $this->get('element')));
+		$this->setPath('extension_administrator', \JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));
 
 		$this->setPath('extension_root', $this->getPath('extension_administrator'));
 
 		if(!$this->manifest->administration) {
-			JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ERROR_COMP_INSTALL_ADMIN_ELEMENT'));
+			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_COMP_INSTALL_ADMIN_ELEMENT'));
 			return false;
 		}
  	}
@@ -79,7 +79,7 @@ class Component extends \forge\excavate\Excavator
  	protected function _buildAdminMenus()
  	{
  		$db     = $this->getDbo();
- 		$table  = JTable::getInstance('menu');
+ 		$table  = \JTable::getInstance('menu');
  		$option = $this->get('element');
 
  		$query = $db->getQuery(true);
@@ -134,7 +134,7 @@ class Component extends \forge\excavate\Excavator
  			$data['home']         = 0;
 
  			if(!$table->setLocation(1, 'last-child') || !$table->bind($data) || !$table->check() || !$table->store()) {
- 				JError::raiseWarning(1, $table->getError());
+ 				\JError::raiseWarning(1, $table->getError());
  				return false;
  			}
 
@@ -156,7 +156,7 @@ class Component extends \forge\excavate\Excavator
  			$data['home']         = 0;
 
  			if(!$table->setLocation(1, 'last-child') || !$table->bind($data) || !$table->check() || !$table->store()) {
- 				JError::raiseWarning(1, $table->getError());
+ 				\JError::raiseWarning(1, $table->getError());
  				return false;
  			}
 
@@ -212,7 +212,7 @@ class Component extends \forge\excavate\Excavator
  				$data['link'] = 'index.php?option=' . $option . $qstring;
  			}
 
- 			$table = JTable::getInstance('menu');
+ 			$table = \JTable::getInstance('menu');
 
  			if(!$table->setLocation($parent_id, 'last-child') || !$table->bind($data) || !$table->check() || !$table->store())
  				return false;
@@ -226,7 +226,7 @@ class Component extends \forge\excavate\Excavator
  	protected function _removeAdminMenus(&$row)
 	{
 		$db    = $this->getDbo();
-		$table = JTable::getInstance('menu');
+		$table = \JTable::getInstance('menu');
 		$id    = $row->extension_id;
 
 		$query = $db->getQuery(true);
@@ -241,10 +241,10 @@ class Component extends \forge\excavate\Excavator
 
 		if($error = $db->getErrorMsg())
 		{
-			JError::raiseWarning('', JText::_('JLIB_INSTALLER_ERROR_COMP_REMOVING_ADMIN_MENUS_FAILED'));
+			\JError::raiseWarning('', \JText::_('JLIB_INSTALLER_ERROR_COMP_REMOVING_ADMIN_MENUS_FAILED'));
 
 			if($error && $error != 1)
-				JError::raiseWarning(100, $error);
+				\JError::raiseWarning(100, $error);
 
 			return false;
 		}
@@ -272,18 +272,18 @@ class Component extends \forge\excavate\Excavator
 	public function discover()
  	{
  		$results          = array();
- 		$site_components  = JFolder::folders(JPATH_SITE . '/components');
- 		$admin_components = JFolder::folders(JPATH_ADMINISTRATOR . '/components');
+ 		$site_components  = \JFolder::folders(JPATH_SITE . '/components');
+ 		$admin_components = \JFolder::folders(JPATH_ADMINISTRATOR . '/components');
 
  		foreach($site_components as $component)
  		{
  			if(file_exists(JPATH_SITE . '/components/' . $component . '/' . str_replace('com_', '', $component) . '.xml'))
  			{
- 				$manifest_details = JApplicationHelper::parseXMLInstallFile(
+ 				$manifest_details = \JApplicationHelper::parseXMLInstallFile(
  					JPATH_SITE . '/components/' . $component . '/' . str_replace('com_', '', $component) . '.xml'
  				);    
  				
- 				$extension = JTable::getInstance('extension');
+ 				$extension = \JTable::getInstance('extension');
  				$extension->set('type', 'component');
  				$extension->set('client_id', 0);
  				$extension->set('element', $component);
@@ -298,11 +298,11 @@ class Component extends \forge\excavate\Excavator
  		{
  			if(file_exists(JPATH_ADMINISTRATOR . '/components/' . $component . '/' . str_replace('com_', '', $component) . '.xml'))
  			{
- 				$manifest_details = JApplicationHelper::parseXMLInstallFile(
+ 				$manifest_details = \JApplicationHelper::parseXMLInstallFile(
  					JPATH_ADMINISTRATOR . '/components/' . $component . '/' . str_replace('com_', '', $component) . '.xml'
  				);       
  				
- 				$extension = JTable::getInstance('extension');
+ 				$extension = \JTable::getInstance('extension');
  				$extension->set('type', 'component');
  				$extension->set('client_id', 1);
  				$extension->set('element', $component);
@@ -318,7 +318,7 @@ class Component extends \forge\excavate\Excavator
  	
  	public function discover_install()
 	{
-		$client        = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client        = \JApplicationHelper::getClientInfo($this->extension->client_id);
 		$short_element = str_replace('com_', '', $this->extension->element);
 		$manifestPath  = $client->path . '/components/' . $this->extension->element . '/' . $short_element . '.xml'; 
 		
@@ -327,7 +327,7 @@ class Component extends \forge\excavate\Excavator
 		$this->setPath('source', $client->path . '/components/' . $this->extension->element);
 		$this->setPath('extension_root', $this->getPath('source'));
 
-		$manifest_details = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->state   = 0;
 		$this->extension->name    = $manifest_details['name'];
@@ -338,7 +338,7 @@ class Component extends \forge\excavate\Excavator
 			$this->extension->store();
 		}
 		catch(JException $e) {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_COMP_DISCOVER_STORE_DETAILS'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_COMP_DISCOVER_STORE_DETAILS'));
 			return false;
 		}
 
@@ -346,7 +346,7 @@ class Component extends \forge\excavate\Excavator
 		$this->manifest = $this->getManifest();
 
 
-		$name = strtolower(JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
+		$name = strtolower(\JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
 		if(substr($name, 0, 4) == "com_")
 			$element = $name;
 		else
@@ -358,16 +358,16 @@ class Component extends \forge\excavate\Excavator
 		$description = (string) $this->manifest->description;
 
 		if($description)
-			$this->set('message', JText::_((string) $description));
+			$this->set('message', \JText::_((string) $description));
 		else
 			$this->set('message', '');
 
-		$this->setPath('extension_site', JPath::clean(JPATH_SITE . '/components/' . $this->get('element')));
-		$this->setPath('extension_administrator', JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));
+		$this->setPath('extension_site', \JPath::clean(JPATH_SITE . '/components/' . $this->get('element')));
+		$this->setPath('extension_administrator', \JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));
 		$this->setPath('extension_root', $this->getPath('extension_administrator')); // copy this as its used as a common base
 
 		if(!$this->manifest->administration) {
-			JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ERROR_COMP_INSTALL_ADMIN_ELEMENT'));
+			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_COMP_INSTALL_ADMIN_ELEMENT'));
 			return false;
 		}
 
@@ -393,7 +393,7 @@ class Component extends \forge\excavate\Excavator
 		if($this->manifestClass && method_exists($this->manifestClass, 'preflight'))
 		{
 			if($this->manifestClass->preflight('discover_install', $this) === false) {
-				$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
+				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
 				return false;
 			}
 		}
@@ -406,13 +406,13 @@ class Component extends \forge\excavate\Excavator
 			$utfresult = $this->parseSQLFiles($this->manifest->install->sql);
 
 			if($utfresult === false) {
-				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_COMP_INSTALL_SQL_ERROR', $db->stderr(true)));
+				$this->abort(\\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_INSTALL_SQL_ERROR', $db->stderr(true)));
 				return false;
 			}
 		}
 
 		if(!$this->_buildAdminMenus($this->extension->extension_id))
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ABORT_COMP_BUILDADMINMENUS_FAILED'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ABORT_COMP_BUILDADMINMENUS_FAILED'));
 
 		if($this->get('install_script'))
 		{
@@ -427,7 +427,7 @@ class Component extends \forge\excavate\Excavator
 				if(function_exists('com_install'))
 				{
 					if(com_install() === false) {
-						$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
+						$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
 						return false;
 					}
 				}
@@ -443,7 +443,7 @@ class Component extends \forge\excavate\Excavator
 		if($this->manifestClass && method_exists($this->manifestClass, 'discover_install'))
 		{
 			if($this->manifestClass->install($this) === false) {
-				$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
+				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
 				return false;
 			}
 		}
@@ -451,7 +451,7 @@ class Component extends \forge\excavate\Excavator
 		$this->msg .= ob_get_contents(); // append messages
 		ob_end_clean();
 
-		$update = JTable::getInstance('update');
+		$update = \JTable::getInstance('update');
 		$uid    = $update->find(array('element' => $this->get('element'), 'type' => 'component', 'client_id' => '', 'folder' => ''));
 
 		if($uid)
@@ -474,13 +474,13 @@ class Component extends \forge\excavate\Excavator
 	
 	public function refreshManifestCache()
 	{
-		$client        = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client        = \JApplicationHelper::getClientInfo($this->extension->client_id);
 		$short_element = str_replace('com_', '', $this->extension->element);
 		$manifestPath  = $client->path . '/components/' . $this->extension->element . '/' . $short_element . '.xml';
 		$this->manifest = $this->isManifest($manifestPath);
 		$this->setPath('manifest', $manifestPath);
 
-		$manifest_details = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->name = $manifest_details['name'];
 
@@ -488,7 +488,7 @@ class Component extends \forge\excavate\Excavator
 			return $this->extension->store();
 		}
 		catch(JException $e) {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_COMP_REFRESH_MANIFEST_CACHE'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_COMP_REFRESH_MANIFEST_CACHE'));
 			return false;
 		}
 	}

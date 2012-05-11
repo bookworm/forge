@@ -12,7 +12,7 @@ class Component extends \forge\excavate\cores\Component
  		$this->setOverwrite(true);
  		$this->manifest = $this->getManifest();
 
- 		$name = strtolower(JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
+ 		$name = strtolower(\JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
  		if(substr($name, 0, 4) == "com_")
  			$element = $name;
  		else
@@ -24,13 +24,13 @@ class Component extends \forge\excavate\cores\Component
  		$description = (string) $this->manifest->description;
 
  		if($description)
- 			$this->set('message', JText::_($description));
+ 			$this->set('message', \JText::_($description));
  		else
  			$this->set('message', '');
 
- 		$this->setPath('extension_site', JPath::clean(JPATH_SITE . '/components/' . $this->get('element')));
- 		$this->setPath('extension_administrator', JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));
- 		$this->setPath('extension_root', $this->getPath('extension_administrator')); // copy this as its used as a common base
+ 		$this->setPath('extension_site', \JPath::clean(JPATH_SITE . '/components/' . $this->get('element')));
+ 		$this->setPath('extension_administrator', \JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $this->get('element')));
+ 		$this->setPath('extension_root', $this->getPath('extension_administrator'));
  		
  		return true;
   }             
@@ -38,7 +38,7 @@ class Component extends \forge\excavate\cores\Component
   public function task_oldFiles()
   {
     $old_manifest = null;
- 		$tmpInstaller = new JInstaller;
+ 		$tmpInstaller = new \JInstaller;
  		$tmpInstaller->setPath('source', $this->getPath('extension_administrator'));
 
  		if(!$tmpInstaller->findManifest())
@@ -60,7 +60,7 @@ class Component extends \forge\excavate\cores\Component
  		}
 
  		if(!$this->manifest->administration) {
- 			JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_ADMIN_ELEMENT'));
+ 			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_ADMIN_ELEMENT'));
  			return false;
  		}
  		
@@ -97,7 +97,7 @@ class Component extends \forge\excavate\cores\Component
  		if($this->manifestClass && method_exists($this->manifestClass, 'preflight'))
  		{
  			if($this->manifestClass->preflight('update', $this) === false) {
- 				$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
+ 				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
  				return false;
  			}
  		}
@@ -113,10 +113,10 @@ class Component extends \forge\excavate\cores\Component
     $created = false;
  		if(!file_exists($this->getPath('extension_site')))
  		{
- 			if(!$created = JFolder::create($this->getPath('extension_site')))
+ 			if(!$created = \JFolder::create($this->getPath('extension_site')))
  			{
- 				JError::raiseWarning(1,
- 					JText::sprintf('JLIB_INSTALLER_ERROR_COMP_UPDATE_FAILED_TO_CREATE_DIRECTORY_SITE', $this->getPath('extension_site'))
+ 				\JError::raiseWarning(1,
+ 					\JText::sprintf('JLIB_INSTALLER_ERROR_COMP_UPDATE_FAILED_TO_CREATE_DIRECTORY_SITE', $this->getPath('extension_site'))
  				);
 
  				return false;
@@ -129,11 +129,11 @@ class Component extends \forge\excavate\cores\Component
  		$created = false;
  		if(!file_exists($this->getPath('extension_administrator')))
  		{
- 			if(!$created = JFolder::create($this->getPath('extension_administrator')))
+ 			if(!$created = \JFolder::create($this->getPath('extension_administrator')))
  			{
- 				JError::raiseWarning(
+ 				\JError::raiseWarning(
  					1,
- 					JText::sprintf(
+ 					\JText::sprintf(
  						'JLIB_INSTALLER_ERROR_COMP_UPDATE_FAILED_TO_CREATE_DIRECTORY_ADMIN',
  						$this->getPath('extension_administrator')
  					)
@@ -203,7 +203,7 @@ class Component extends \forge\excavate\cores\Component
  				$path['dest'] = $this->getPath('extension_administrator') . '/' . $installFile;
 
  				if(!$this->copyFiles(array($path))) {
- 					$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_PHP_INSTALL'));
+ 					$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_PHP_INSTALL'));
  					return false;
  				}
  			}
@@ -225,7 +225,7 @@ class Component extends \forge\excavate\cores\Component
  				$path['dest'] = $this->getPath('extension_administrator') . '/' . $uninstallFile;
 
  				if(!$this->copyFiles(array($path))) {
- 					$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_PHP_UNINSTALL'));
+ 					$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_PHP_UNINSTALL'));
  					return false;
  				}
  			}
@@ -244,7 +244,7 @@ class Component extends \forge\excavate\cores\Component
  			if(!file_exists($path['dest']) || $this->getOverwrite())
  			{
  				if(!$this->copyFiles(array($path))) {
- 					$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_MANIFEST'));
+ 					$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_MANIFEST'));
  					return false;
  				}
  			}
@@ -255,7 +255,7 @@ class Component extends \forge\excavate\cores\Component
   
   public function task_schemaUpdates()
   {
-    $row       = JTable::getInstance('extension');
+    $row       = \JTable::getInstance('extension');
  		$eid       = $row->find(array('element' => strtolower($this->get('element')), 'type' => 'component'));     
  		$this->eid = $eid;
 
@@ -264,7 +264,7 @@ class Component extends \forge\excavate\cores\Component
  			$result = $this->parseSchemaUpdates($this->manifest->update->schemas, $eid);
 
  			if($result === false) {
- 				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_COMP_UPDATE_SQL_ERROR', $db->stderr(true)));
+ 				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_UPDATE_SQL_ERROR', $db->stderr(true)));
  				return false;
  			}
  		}
@@ -275,7 +275,7 @@ class Component extends \forge\excavate\cores\Component
   public function task_buildAdminMenus()
   {
     if(!$this->_buildAdminMenus($eid))
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ABORT_COMP_BUILDADMINMENUS_FAILED'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ABORT_COMP_BUILDADMINMENUS_FAILED'));
  		
  		return true;
   }     
@@ -296,7 +296,7 @@ class Component extends \forge\excavate\cores\Component
  				if(function_exists('com_install'))
  				{
  					if(com_install() === false) {
- 						$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
+ 						$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
  						return false;
  					}
  				}
@@ -317,7 +317,7 @@ class Component extends \forge\excavate\cores\Component
  		if($this->manifestClass && method_exists($this->manifestClass, 'update'))
  		{
  			if($this->manifestClass->update($this) === false) {
- 				$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
+ 				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_INSTALL_CUSTOM_INSTALL_FAILURE'));
  				return false;
  			}
  		}
@@ -330,7 +330,7 @@ class Component extends \forge\excavate\cores\Component
   
   public function task_setUID()
   {
-    $update = JTable::getInstance('update');
+    $update = \JTable::getInstance('update');
  		$uid    = $update->find(array('element' => $this->get('element'), 'type' => 'component', 'client_id' => '', 'folder' => ''));
 
  		if($uid)
@@ -361,7 +361,7 @@ class Component extends \forge\excavate\cores\Component
  		$row->manifest_cache = $this->generateManifestCache();
 
  		if(!$row->store()) {
- 			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_COMP_UPDATE_ROLLBACK', $db->stderr(true)));
+ 			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_UPDATE_ROLLBACK', $db->stderr(true)));
  			return false;
  		}
  		
@@ -371,7 +371,7 @@ class Component extends \forge\excavate\cores\Component
   public function task_copyManifestFile()
   {
     if(!$this->copyManifest()) {
- 			$this->abort(JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_COPY_SETUP'));
+ 			$this->abort(\JText::_('JLIB_INSTALLER_ABORT_COMP_UPDATE_COPY_SETUP'));
  			return false;
  		}
  		

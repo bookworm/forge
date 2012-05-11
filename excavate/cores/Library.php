@@ -14,9 +14,9 @@ class Library extends \forge\excavate\Excavator
 
 		$this->manifest = $this->getManifest();      
 		
-		$extension = 'lib_' . strtolower(JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
+		$extension = 'lib_' . strtolower(\JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
 		$name = strtolower((string) $this->manifest->libraryname);
-		$lang = JFactory::getLanguage();  
+		$lang = \JFactory::getLanguage();  
 		
 		$source = $path ? $path : JPATH_PLATFORM . "/$name";
 		$lang->load($extension . '.sys', $source, null, false, false)
@@ -28,13 +28,13 @@ class Library extends \forge\excavate\Excavator
 	public function discover()
 	{
 		$results = array();
-		$file_list = JFolder::files(JPATH_MANIFESTS . '/libraries', '\.xml$');  
+		$file_list = \JFolder::files(JPATH_MANIFESTS . '/libraries', '\.xml$');  
 		
 		foreach($file_list as $file)
 		{
-			$manifest_details = JApplicationHelper::parseXMLInstallFile(JPATH_MANIFESTS . '/libraries/' . $file);
-			$file = JFile::stripExt($file);
-			$extension = JTable::getInstance('extension');
+			$manifest_details = \JApplicationHelper::parseXMLInstallFile(JPATH_MANIFESTS . '/libraries/' . $file);
+			$file = \JFile::stripExt($file);
+			$extension = \JTable::getInstance('extension');
 			$extension->set('type', 'library');
 			$extension->set('client_id', 0);
 			$extension->set('element', $file);
@@ -52,7 +52,7 @@ class Library extends \forge\excavate\Excavator
 		$manifestPath = JPATH_MANIFESTS . '/libraries/' . $this->extension->element . '.xml';
 		$this->manifest = $this->isManifest($manifestPath);
 		$this->setPath('manifest', $manifestPath);
-		$manifest_details = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->state   = 0;
 		$this->extension->name    = $manifest_details['name'];
@@ -62,7 +62,7 @@ class Library extends \forge\excavate\Excavator
 		if($this->extension->store())
 			return true;
 		else {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_LIB_DISCOVER_STORE_DETAILS'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_LIB_DISCOVER_STORE_DETAILS'));
 			return false;
 		}
 	}     
@@ -73,7 +73,7 @@ class Library extends \forge\excavate\Excavator
 		$this->manifest = $this->isManifest($manifestPath);
 		$this->setPath('manifest', $manifestPath);
 
-		$manifest_details = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->name = $manifest_details['name'];
 
@@ -81,7 +81,7 @@ class Library extends \forge\excavate\Excavator
 			return $this->extension->store();
 		}
 		catch(JException $e) {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_LIB_REFRESH_MANIFEST_CACHE'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_LIB_REFRESH_MANIFEST_CACHE'));
 			return false;
 		}
 	}   
@@ -90,7 +90,7 @@ class Library extends \forge\excavate\Excavator
   {
     $this->manifest = $this->getManifest();
 
-		$name    = JFilterInput::getInstance()->clean((string) $this->manifest->name, 'string');
+		$name    = \JFilterInput::getInstance()->clean((string) $this->manifest->name, 'string');
 		$element = str_replace('.xml', '', basename($this->getPath('manifest')));
 		$this->set('name', $name);
 		$this->set('element', $element);          
@@ -112,11 +112,11 @@ class Library extends \forge\excavate\Excavator
 		if($result)
 		{
 			if($this->getOverwrite() || $this->getUpgrade()) {   
-				$installer = new JInstaller; 
+				$installer = new \JInstaller; 
 				$installer->uninstall('library', $result);
 			}
 			else {
-				$this->abort(JText::_('JLIB_INSTALLER_ABORT_LIB_INSTALL_ALREADY_INSTALLED'));
+				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_LIB_INSTALL_ALREADY_INSTALLED'));
 				return false;
 			}
 		}
@@ -128,13 +128,13 @@ class Library extends \forge\excavate\Excavator
   {
     $description = (string) $this->manifest->description;
 		if($description)
-			$this->set('message', JText::_($description));
+			$this->set('message', \JText::_($description));
 		else
 			$this->set('message', '');  
 			
 		$group = (string) $this->manifest->libraryname;
 		if(!$group) {
-			$this->abort(JText::_('JLIB_INSTALLER_ABORT_LIB_INSTALL_NOFILE'));
+			$this->abort(\JText::_('JLIB_INSTALLER_ABORT_LIB_INSTALL_NOFILE'));
 			return false;
 		}
 		else
@@ -148,10 +148,10 @@ class Library extends \forge\excavate\Excavator
     $created = false;
  		if(!file_exists($this->getPath('extension_root')))
  		{
- 			if(!$created = JFolder::create($this->getPath('extension_root')))
+ 			if(!$created = \JFolder::create($this->getPath('extension_root')))
  			{
  				$this->abort(
- 					JText::sprintf('JLIB_INSTALLER_ABORT_LIB_INSTALL_FAILED_TO_CREATE_DIRECTORY', $this->getPath('extension_root'))
+ 					\JText::sprintf('JLIB_INSTALLER_ABORT_LIB_INSTALL_FAILED_TO_CREATE_DIRECTORY', $this->getPath('extension_root'))
  				);        
 
  				return false;
@@ -171,7 +171,7 @@ class Library extends \forge\excavate\Excavator
   
   public function _taskInsertRow()
   {
-    $row = JTable::getInstance('extension');
+    $row = \JTable::getInstance('extension');
 		$row->name           = $this->get('name');
 		$row->type           = 'library';
 		$row->element        = $this->get('element');
@@ -184,7 +184,7 @@ class Library extends \forge\excavate\Excavator
 		$row->custom_data    = '';
 		$row->manifest_cache = $this->generateManifestCache();
 		if(!$row->store()) {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_LIB_INSTALL_ROLLBACK', $db->stderr(true)));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_LIB_INSTALL_ROLLBACK', $db->stderr(true)));
 			return false;
 		}      
 		
@@ -200,7 +200,7 @@ class Library extends \forge\excavate\Excavator
 		$manifest['dest'] = JPATH_MANIFESTS . '/libraries/' . basename($this->getPath('manifest'));    
 		
 		if(!$this->copyFiles(array($manifest), true)) {
-			$this->abort(JText::_('JLIB_INSTALLER_ABORT_LIB_INSTALL_COPY_SETUP'));
+			$this->abort(\JText::_('JLIB_INSTALLER_ABORT_LIB_INSTALL_COPY_SETUP'));
 			return false;
 		}
 		

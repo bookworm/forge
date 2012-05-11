@@ -15,19 +15,19 @@ class Plugin extends \forge\excavate\cores\Plugin
  		$retval = true;
  		$db     = $this->getDbo();
 
- 		$row = JTable::getInstance('extension');
+ 		$row = \JTable::getInstance('extension');
  		if(!$row->load((int) $id)) {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_ERRORUNKOWNEXTENSION'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_ERRORUNKOWNEXTENSION'));
  			return false;
  		}
 
  		if($row->protected) {
- 			JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_WARNCOREPLUGIN', $row->name));
+ 			\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_WARNCOREPLUGIN', $row->name));
  			return false;
  		}
 
  		if(trim($row->folder) == '') {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_FOLDER_FIELD_EMPTY'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_FOLDER_FIELD_EMPTY'));
  			return false;
  		}
 
@@ -39,21 +39,21 @@ class Plugin extends \forge\excavate\cores\Plugin
  		$manifestFile = $this->getPath('extension_root') . '/' . $row->element . '.xml';
 
  		if(!file_exists($manifestFile)) {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
  			return false;
  		}
 
- 		$xml = JFactory::getXML($manifestFile);
+ 		$xml = \JFactory::getXML($manifestFile);
 
  		$this->manifest = $xml;
 
  		if(!$xml) {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_LOAD_MANIFEST'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_LOAD_MANIFEST'));
  			return false;
  		}
 
  		if($xml->getName() != 'install' && $xml->getName() != 'extension') {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_INVALID_MANIFEST'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_PLG_UNINSTALL_INVALID_MANIFEST'));
  			return false;
  		}
 
@@ -81,7 +81,7 @@ class Plugin extends \forge\excavate\cores\Plugin
  		if($this->manifestClass && method_exists($this->manifestClass, 'preflight'))
  		{
  			if($this->manifestClass->preflight($this->route, $this) === false) {
- 				$this->abort(JText::_('JLIB_INSTALLER_ABORT_PLG_INSTALL_CUSTOM_INSTALL_FAILURE'));
+ 				$this->abort(\JText::_('JLIB_INSTALLER_ABORT_PLG_INSTALL_CUSTOM_INSTALL_FAILURE'));
  				return false;
  			}
  		}
@@ -91,7 +91,7 @@ class Plugin extends \forge\excavate\cores\Plugin
 
  		$utfresult = $this->parseSQLFiles($xml->{strtolower($this->route)}->sql);
  		if($utfresult === false) {
- 			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT_PLG_UNINSTALL_SQL_ERROR', $db->stderr(true)));
+ 			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_PLG_UNINSTALL_SQL_ERROR', $db->stderr(true)));
  			return false;
  		}
 
@@ -106,7 +106,7 @@ class Plugin extends \forge\excavate\cores\Plugin
 
  		$this->removeFiles($xml->images, -1);
  		$this->removeFiles($xml->files, -1);
- 		JFile::delete($manifestFile);
+ 		\JFile::delete($manifestFile);
 
  		$this->removeFiles($xml->media);
  		$this->removeFiles($xml->languages, 1);
@@ -119,11 +119,11 @@ class Plugin extends \forge\excavate\cores\Plugin
  		$row->delete($row->extension_id);
  		unset($row);
 
- 		$files = JFolder::files($this->getPath('extension_root'));
+ 		$files = \JFolder::files($this->getPath('extension_root'));
 
- 		JFolder::delete($this->getPath('extension_root'));
+ 		\JFolder::delete($this->getPath('extension_root'));
 
- 		if($msg)
+ 		if($this->msg)
  			$this->set('extension_message', $this->msg);
 
  		return $retval;

@@ -66,8 +66,8 @@ if(!function_exists('renameFile'))
   {
     $src     = $path . DS . $fileold;
     $dest    = $path . DS . $filenew;
-    JFile::move($src, $dest);     
-    #JFile::delete($fileold);
+    \JFile::move($src, $dest);     
+    #\JFile::delete($fileold);
   }
 }   
 

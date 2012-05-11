@@ -15,13 +15,13 @@ class Language extends \forge\excavate\Excavator
   
   public function _install($cname, $basePath, $clientId, &$element)
   {       
-		$name = JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd');
+		$name = \JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd');
 		$this->set('name', $name);    
 		
 		$tag = (string) $this->manifest->tag;   
 		
 		if(!$tag) {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT', JText::_('JLIB_INSTALLER_ERROR_NO_LANGUAGE_TAG')));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', \JText::_('JLIB_INSTALLER_ERROR_NO_LANGUAGE_TAG')));
 			return false;
 		}  
 		
@@ -43,8 +43,8 @@ class Language extends \forge\excavate\Excavator
 		
 		if(!$this->_core)
 		{
-			if(!JFile::exists($this->getPath('extension_site') . '/' . $this->get('tag') . '.xml')) {
-				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT', JText::sprintf('JLIB_INSTALLER_ERROR_NO_CORE_LANGUAGE', $this->get('tag'))));
+			if(!\JFile::exists($this->getPath('extension_site') . '/' . $this->get('tag') . '.xml')) {
+				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', \JText::sprintf('JLIB_INSTALLER_ERROR_NO_CORE_LANGUAGE', $this->get('tag'))));
 				return false;
 			}
 		} 
@@ -52,12 +52,12 @@ class Language extends \forge\excavate\Excavator
 		$created = false;
 		if(!file_exists($this->getPath('extension_site')))
 		{
-			if(!$created = JFolder::create($this->getPath('extension_site')))
+			if(!$created = \JFolder::create($this->getPath('extension_site')))
 			{
 				$this->abort(
-					JText::sprintf(
+					\JText::sprintf(
 						'JLIB_INSTALLER_ABORT',
-						JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_FOLDER_FAILED', $this->getPath('extension_site'))
+						\JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_FOLDER_FAILED', $this->getPath('extension_site'))
 					)
 				);     
 				
@@ -75,19 +75,19 @@ class Language extends \forge\excavate\Excavator
 			{
 				if(file_exists($this->getPath('extension_site')))
 				{
-					JError::raiseWarning(1,
-						JText::sprintf(
+					\JError::raiseWarning(1,
+						\JText::sprintf(
 							'JLIB_INSTALLER_ABORT',
-							JText::sprintf('JLIB_INSTALLER_ERROR_FOLDER_IN_USE', $this->getPath('extension_site'))
+							\JText::sprintf('JLIB_INSTALLER_ERROR_FOLDER_IN_USE', $this->getPath('extension_site'))
 						)
 					);
 				}
 				else
 				{
-					JError::raiseWarning(1,
-						JText::sprintf(
+					\JError::raiseWarning(1,
+						\JText::sprintf(
 							'JLIB_INSTALLER_ABORT',
-							JText::sprintf('JLIB_INSTALLER_ERROR_FOLDER_IN_USE', $this->getPath('extension_administrator'))
+							\JText::sprintf('JLIB_INSTALLER_ERROR_FOLDER_IN_USE', $this->getPath('extension_administrator'))
 						)
 					);
 				}    
@@ -117,11 +117,11 @@ class Language extends \forge\excavate\Excavator
 		
 		$description = (string) $this->description;
 		if($description)
-			$this->set('message', JText::_($description));
+			$this->set('message', \JText::_($description));
 		else
 			$this->set('message', '');      
 			
-		$row = JTable::getInstance('extension');
+		$row = \JTable::getInstance('extension');
 		$row->set('name', $this->get('name'));
 		$row->set('type', 'language');
 		$row->set('element', $this->get('tag'));
@@ -135,11 +135,11 @@ class Language extends \forge\excavate\Excavator
 		$row->set('manifest_cache', $this->generateManifestCache());
 
 		if(!$row->store()) {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT', $row->getError()));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', $row->getError()));
 			return false;
 		}	    
 		
-		$update = JTable::getInstance('update');
+		$update = \JTable::getInstance('update');
 		$uid    = $update->find(array('element' => $this->get('tag'), 'type' => 'language', 'client_id' => '', 'folder' => ''));
 		if($uid)
 			$update->delete($uid);
@@ -153,9 +153,9 @@ class Language extends \forge\excavate\Excavator
 		$this->manifest = $xml;
 		$cname = $xml->attributes()->client;
 
-		$client = JApplicationHelper::getClientInfo($cname, true);
+		$client = \JApplicationHelper::getClientInfo($cname, true);
 		if($client === null || (empty($cname) && $cname !== 0)) {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT', JText::sprintf('JLIB_INSTALLER_ERROR_UNKNOWN_CLIENT_TYPE', $cname)));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', \JText::sprintf('JLIB_INSTALLER_ERROR_UNKNOWN_CLIENT_TYPE', $cname)));
 			return false;
 		}
 		$basePath = $client->path;
@@ -163,13 +163,13 @@ class Language extends \forge\excavate\Excavator
 		
 		
 		$name = (string) $this->manifest->name;
-		$name = JFilterInput::getInstance()->clean($name, 'cmd');
+		$name = \JFilterInput::getInstance()->clean($name, 'cmd');
 		$this->set('name', $name);        
 		
 		$tag = (string) $xml->tag;   
 		
 		if(!$tag) {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT', JText::_('JLIB_INSTALLER_ERROR_NO_LANGUAGE_TAG')));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', \JText::_('JLIB_INSTALLER_ERROR_NO_LANGUAGE_TAG')));
 			return false;
 		}     
 		
@@ -191,8 +191,8 @@ class Language extends \forge\excavate\Excavator
 		
 		if(!$this->_core)
 		{
-			if(!JFile::exists($this->getPath('extension_site') . '/' . $this->get('tag') . '.xml')) {
-				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT', JText::sprintf('JLIB_INSTALLER_ERROR_NO_CORE_LANGUAGE', $this->get('tag'))));
+			if(!\JFile::exists($this->getPath('extension_site') . '/' . $this->get('tag') . '.xml')) {
+				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', \JText::sprintf('JLIB_INSTALLER_ERROR_NO_CORE_LANGUAGE', $this->get('tag'))));
 				return false;
 			}
 		}
@@ -215,12 +215,12 @@ class Language extends \forge\excavate\Excavator
 		
 		$this->set('message', (string) $xml->description);      
 		
-		$update = JTable::getInstance('update');
+		$update = \JTable::getInstance('update');
 		$uid = $update->find(array('element' => $this->get('tag'), 'type' => 'language', 'client_id' => $clientId));
 		if($uid)
 			$update->delete($uid);
 		
-		$row = JTable::getInstance('extension');
+		$row = \JTable::getInstance('extension');
 		$eid = $row->find(array('element' => strtolower($this->get('tag')), 'type' => 'language', 'client_id' => $clientId));
 		if($eid) {
 			$row->load($eid);
@@ -240,11 +240,10 @@ class Language extends \forge\excavate\Excavator
 		$row->set('manifest_cache', $this->generateManifestCache());    
 		
 		if(!$row->store()) {
-			$this-->abort(JText::sprintf('JLIB_INSTALLER_ABORT', $row->getError()));
+			$this-->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', $row->getError()));
 			return false;
 		}
 
-		// And now we run the postflight
 		ob_start();
 		ob_implicit_flush(false);
 		if($this->manifestClass && method_exists($this->manifestClass, 'postflight'))
@@ -262,15 +261,15 @@ class Language extends \forge\excavate\Excavator
   public function discover()
   {
     $results = array();
-		$site_languages = JFolder::folders(JPATH_SITE . '/language');
-		$admin_languages = JFolder::folders(JPATH_ADMINISTRATOR . '/language');  
+		$site_languages = \JFolder::folders(JPATH_SITE . '/language');
+		$admin_languages = \JFolder::folders(JPATH_ADMINISTRATOR . '/language');  
 		
 		foreach($site_languages as $language)
 		{
 			if(file_exists(JPATH_SITE . '/language/' . $language . '/' . $language . '.xml'))
 			{
-				$manifest_details = JApplicationHelper::parseXMLInstallFile(JPATH_SITE . '/language/' . $language . '/' . $language . '.xml');
-				$extension = JTable::getInstance('extension');
+				$manifest_details = \JApplicationHelper::parseXMLInstallFile(JPATH_SITE . '/language/' . $language . '/' . $language . '.xml');
+				$extension = \JTable::getInstance('extension');
 				$extension->set('type', 'language');
 				$extension->set('client_id', 0);
 				$extension->set('element', $language);
@@ -285,8 +284,8 @@ class Language extends \forge\excavate\Excavator
 		{
 			if(file_exists(JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.xml'))
 			{
-				$manifest_details = JApplicationHelper::parseXMLInstallFile(JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.xml');
-				$extension = JTable::getInstance('extension');
+				$manifest_details = \JApplicationHelper::parseXMLInstallFile(JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.xml');
+				$extension = \JTable::getInstance('extension');
 				$extension->set('type', 'language');
 				$extension->set('client_id', 1);
 				$extension->set('element', $language);
@@ -302,7 +301,7 @@ class Language extends \forge\excavate\Excavator
   
   public function discover_install()
   {
-		$client = JApplicationHelper::getClientInfo($this->extension->client_id);    
+		$client = \JApplicationHelper::getClientInfo($this->extension->client_id);    
 		
 		$short_element  = $this->extension->element;
 		$manifestPath   = $client->path . '/language/' . $short_element . '/' . $short_element . '.xml';
@@ -312,7 +311,7 @@ class Language extends \forge\excavate\Excavator
 		$this->setPath('source', $client->path . '/language/' . $short_element);
 		$this->setPath('extension_root', $this->getPath('source'));      
 		
-		$manifest_details                = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details                = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->state          = 0;
 		$this->extension->name           = $manifest_details['name'];
@@ -322,7 +321,7 @@ class Language extends \forge\excavate\Excavator
 			$this->extension->store();
 		}
 		catch(JException $e) {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_LANG_DISCOVER_STORE_DETAILS'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_LANG_DISCOVER_STORE_DETAILS'));
 			return false;
 		}           
 		
@@ -331,19 +330,19 @@ class Language extends \forge\excavate\Excavator
   
   public function refreshManifestCache()
 	{
-		$client         = JApplicationHelper::getClientInfo($this->extension->client_id);
+		$client         = \JApplicationHelper::getClientInfo($this->extension->client_id);
 		$manifestPath   = $client->path . '/language/' . $this->extension->element . '/' . $this->extension->element . '.xml';
 		$this->manifest = $this->isManifest($manifestPath);
 		$this->setPath('manifest', $manifestPath);      
 		
-		$manifest_details = JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
+		$manifest_details = \JApplicationHelper::parseXMLInstallFile($this->getPath('manifest'));
 		$this->extension->manifest_cache = json_encode($manifest_details);
 		$this->extension->name = $manifest_details['name'];
 
 		if($this->extension->store())
 			return true;
 		else {
-			JError::raiseWarning(101, JText::_('JLIB_INSTALLER_ERROR_MOD_REFRESH_MANIFEST_CACHE'));
+			\JError::raiseWarning(101, \JText::_('JLIB_INSTALLER_ERROR_MOD_REFRESH_MANIFEST_CACHE'));
 			return false;
 		}
 	}

@@ -27,7 +27,7 @@ class Language extends \forge\excavate\cores\Language
   {  
     if((string) $this->manifest->attributes()->client == 'both')
 		{
-			JError::raiseWarning(42, JText::_('JLIB_INSTALLER_ERROR_DEPRECATED_FORMAT'));
+			\JError::raiseWarning(42, \JText::_('JLIB_INSTALLER_ERROR_DEPRECATED_FORMAT'));
 			$element = $this->manifest->site->files;
 			if(!$this->_install('site', JPATH_SITE, 0, $element))
 				return false;
@@ -40,10 +40,10 @@ class Language extends \forge\excavate\cores\Language
 		}
 		elseif($cname = (string) $this->manifest->attributes()->client)
 		{
-			$client = JApplicationHelper::getClientInfo($cname, true);    
+			$client = \JApplicationHelper::getClientInfo($cname, true);    
 			
 			if($client === null) {
-				$this->abort(JText::sprintf('JLIB_INSTALLER_ABORT', JText::sprintf('JLIB_INSTALLER_ERROR_UNKNOWN_CLIENT_TYPE', $cname)));
+				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT', \JText::sprintf('JLIB_INSTALLER_ERROR_UNKNOWN_CLIENT_TYPE', $cname)));
 				return false;
 			}      
 			

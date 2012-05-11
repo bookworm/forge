@@ -45,9 +45,9 @@ class Status extends \forge\core\Object
   
   public function finished()
   {
-    $fileold = JFile::makeSafe('dig_status'); 
+    $fileold = \JFile::makeSafe('dig_status'); 
     $now     = strftime("%d-%H-%S", time());       
-    $filenew = JFile::makeSafe('dig' . '_' . 'completed_'.$now);
+    $filenew = \JFile::makeSafe('dig' . '_' . 'completed_'.$now);
 
     renameFile($fileold, $filenew, $this->tmpPath()); 
     $this->serialize();     
@@ -124,8 +124,8 @@ class Status extends \forge\core\Object
     $ext_name = $excavation->artifact->ext_name();
     
     // Rename excavation file.     
-    $fileold = JFile::makeSafe('Excavation' . '_' . $ext_name . '_start');
-    $filenew = JFile::makeSafe('Excavation' . '_' . $ext_name . '_completed');
+    $fileold = \JFile::makeSafe('Excavation' . '_' . $ext_name . '_start');
+    $filenew = \JFile::makeSafe('Excavation' . '_' . $ext_name . '_completed');
     $path    = $this->tmpPath() . DS . 'excavations';                                       
 
     renameFile($fileold, $filenew, $path);    

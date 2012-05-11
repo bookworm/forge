@@ -16,25 +16,25 @@ class Language extends \forge\excavate\cores\Language
   {
     $eid = $this->eid;  
     
-	  $extension = JTable::getInstance('extension');
+	  $extension = \JTable::getInstance('extension');
 		$extension->load($eid);
-		$client = JApplicationHelper::getClientInfo($extension->get('client_id'));    
+		$client = \JApplicationHelper::getClientInfo($extension->get('client_id'));    
 		
 		$element = $extension->get('element');
 		if(empty($element)) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_ELEMENT_EMPTY'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_ELEMENT_EMPTY'));
 			return false;
 		}   
 		
 		$protected = $extension->get('protected');
 		if($protected == 1) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_PROTECTED'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_PROTECTED'));
 			return false;
 		}      
 		
-		$params = JComponentHelper::getParams('com_languages');
+		$params = \JComponentHelper::getParams('com_languages');
 		if($params->get($client->name) == $element) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_DEFAULT'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_DEFAULT'));
 			return false;
 		}
 		
@@ -45,21 +45,21 @@ class Language extends \forge\excavate\cores\Language
 		$this->removeFiles($this->manifest->media);
 		
 		
-		if(!JFolder::exists($path)) {
+		if(!\JFolder::exists($path)) {
 			$extension->delete();
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_PATH_EMPTY'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_PATH_EMPTY'));
 			return false;
 		}
 
-		if(!JFolder::delete($path)) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_DIRECTORY'));
+		if(!\JFolder::delete($path)) {
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_LANG_UNINSTALL_DIRECTORY'));
 			return false;
 		}        
 		
 		$extension->delete();
 		
 		
-		$db = JFactory::getDbo();
+		$db = \JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->from('#__users');
 		$query->select('*');
@@ -73,7 +73,7 @@ class Language extends \forge\excavate\cores\Language
 		$count = 0;
 		foreach ($users as $user)
 		{
-			$registry = new JRegistry;
+			$registry = new \JRegistry;
 			$registry->loadString($user->params);
 			if($registry->get($param_name) == $element)
 			{
@@ -89,7 +89,7 @@ class Language extends \forge\excavate\cores\Language
 		}     
 		
 		if(!empty($count))
-			JError::raiseNotice(500, JText::plural('JLIB_INSTALLER_NOTICE_LANG_RESET_USERS', $count));
+			\JError::raiseNotice(500, \JText::plural('JLIB_INSTALLER_NOTICE_LANG_RESET_USERS', $count));
 
 		return true;
   }      

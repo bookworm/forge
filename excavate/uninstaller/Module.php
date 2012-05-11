@@ -13,23 +13,23 @@ class Module extends \forge\excavate\cores\Module
 		$retval = true;
 		$db     = $this->getDbo();
 
-		$row = JTable::getInstance('extension');
+		$row = \JTable::getInstance('extension');
 
 		if(!$row->load((int) $id) || !strlen($row->element)) {
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_ERRORUNKOWNEXTENSION'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_ERRORUNKOWNEXTENSION'));
 			return false;
 		}
 
 		if($row->protected) {
-			JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_WARNCOREMODULE', $row->name));
+			\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_WARNCOREMODULE', $row->name));
 			return false;
 		}
 
 		$element = $row->element;
-		$client  = JApplicationHelper::getClientInfo($row->client_id);
+		$client  = \JApplicationHelper::getClientInfo($row->client_id);
 
 		if($client === false) {
-			$this->abort(JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_UNKNOWN_CLIENT', $row->client_id));
+			$this->abort(\JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_UNKNOWN_CLIENT', $row->client_id));
 			return false;
 		}
 		$this->setPath('extension_root', $client->path . '/modules/' . $element);
@@ -68,9 +68,10 @@ class Module extends \forge\excavate\cores\Module
 		$this->msg = ob_get_contents();
 		ob_end_clean();
 
-		if(!($this->manifest instanceof JXMLElement)) {
-			JFolder::delete($this->getPath('extension_root'));
-			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
+		if(!($this->manifest instanceof JXMLElement)) 
+		{
+			\JFolder::delete($this->getPath('extension_root'));
+			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));
 
 			return false;
 		}
@@ -78,7 +79,7 @@ class Module extends \forge\excavate\cores\Module
 		$utfresult = $this->parseSQLFiles($this->manifest->uninstall->sql);
 
 		if($utfresult === false) {
-			JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_SQL_ERROR', $db->stderr(true)));
+			\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_SQL_ERROR', $db->stderr(true)));
 			$retval = false;
 		}
 
@@ -105,7 +106,7 @@ class Module extends \forge\excavate\cores\Module
 
 		if(count($modules))
 		{
-			JArrayHelper::toInteger($modules);
+			\JArrayHelper::toInteger($modules);
 			$modID = implode(',', $modules);
 
 			$query = 'DELETE' . ' FROM #__modules_menu' . ' WHERE moduleid IN (' . $modID . ')';
@@ -114,7 +115,7 @@ class Module extends \forge\excavate\cores\Module
 				$db->query();
 			}
 			catch(JException $e) {
-				JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_EXCEPTION', $db->stderr(true)));
+				\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_EXCEPTION', $db->stderr(true)));
 				$retval = false;
 			}
 
@@ -125,7 +126,7 @@ class Module extends \forge\excavate\cores\Module
 				$db->query();
 			}
 			catch(JException $e) {
-				JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_EXCEPTION', $db->stderr(true)));
+				\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_EXCEPTION', $db->stderr(true)));
 				$retval = false;
 			}
 		}
@@ -142,7 +143,7 @@ class Module extends \forge\excavate\cores\Module
 
 		unset($row);
 
-		if(!JFolder::delete($this->getPath('extension_root')))
+		if(!\JFolder::delete($this->getPath('extension_root')))
 			$retval = false;
 
 		return $retval;

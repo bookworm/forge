@@ -104,7 +104,7 @@ class Installer extends \forge\core\Object
 			$db->setQuery($query->data());
 
 			if(!$db->query()) {
-				JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+				\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 				return false;
 			}
 		}
@@ -142,18 +142,18 @@ class Installer extends \forge\core\Object
 				$sqlfile = $this->getPath('extension_root') . '/' . $file;
 
 				if(!file_exists($sqlfile)) {
-					JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_FILENOTFOUND', $sqlfile));
+					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_SQL_FILENOTFOUND', $sqlfile));
 					return false;
 				}
 
 				$buffer = file_get_contents($sqlfile);
 
 				if($buffer === false) {
-					JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ERROR_SQL_READBUFFER'));
+					\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_SQL_READBUFFER'));
 					return false;
 				}
 
-				$queries = JInstallerHelper::splitSql($buffer);
+				$queries = \JInstallerHelper::splitSql($buffer);
 
 				if(count($queries) == 0)
 					return 0;
@@ -167,7 +167,7 @@ class Installer extends \forge\core\Object
 						$db->setQuery($query);
 
 						if(!$db->query()) {
-							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+							\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 							return false;
 						}
 					}
@@ -182,7 +182,7 @@ class Installer extends \forge\core\Object
 	{
 		if($eid && $schema)
 		{
-			$db          = JFactory::getDBO();
+			$db          = \JFactory::getDBO();
 			$schemapaths = $schema->children();
 
 			if(!$schemapaths)
@@ -209,7 +209,7 @@ class Installer extends \forge\core\Object
 
 				if(strlen($schemapath))
 				{
-					$files = str_replace('.sql', '', JFolder::files($this->getPath('extension_root') . '/' . $schemapath, '\.sql$'));
+					$files = str_replace('.sql', '', \JFolder::files($this->getPath('extension_root') . '/' . $schemapath, '\.sql$'));
 					usort($files, 'version_compare');
 
 					$query = $db->getQuery(true);
@@ -241,7 +241,7 @@ class Installer extends \forge\core\Object
 
 		if($eid && $schema)
 		{
-			$db          = JFactory::getDBO();
+			$db          = \JFactory::getDBO();
 			$schemapaths = $schema->children();
 
 			if(count($schemapaths))
@@ -265,7 +265,7 @@ class Installer extends \forge\core\Object
 
 				if(strlen($schemapath))
 				{
-					$files = str_replace('.sql', '', JFolder::files($this->getPath('extension_root') . '/' . $schemapath, '\.sql$'));
+					$files = str_replace('.sql', '', \JFolder::files($this->getPath('extension_root') . '/' . $schemapath, '\.sql$'));
 					usort($files, 'version_compare');
 
 					if(!count($files))
@@ -287,11 +287,11 @@ class Installer extends \forge\core\Object
 								$buffer = file_get_contents($this->getPath('extension_root') . '/' . $schemapath . '/' . $file . '.sql');
 
 								if($buffer === false) {
-									JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ERROR_SQL_READBUFFER'));
+									\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_SQL_READBUFFER'));
 									return false;
 								}
 
-								$queries = JInstallerHelper::splitSql($buffer);
+								$queries = \JInstallerHelper::splitSql($buffer);
 
 								if(count($queries) == 0)
 									continue;
@@ -304,7 +304,7 @@ class Installer extends \forge\core\Object
 										$db->setQuery($query);
 
 										if(!$db->query()) {
-											JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
+											\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_SQL_ERROR', $db->stderr(true)));
 											return false;
 										}
 
@@ -343,7 +343,7 @@ class Installer extends \forge\core\Object
 			return 0;
 
 		$copyfiles = array();
-		$client = JApplicationHelper::getClientInfo($cid);
+		$client = \JApplicationHelper::getClientInfo($cid);
 
 		if($client) {
 			$pathname    = 'extension_' . $client->name;
@@ -370,11 +370,11 @@ class Installer extends \forge\core\Object
 				$deletions = $this->findDeletedFiles($oldEntries, $element->children());
 
 				foreach($deletions['folders'] as $deleted_folder) {
-					JFolder::delete($destination . '/' . $deleted_folder);
+					\JFolder::delete($destination . '/' . $deleted_folder);
 				}
 
 				foreach($deletions['files'] as $deleted_file) {
-					JFile::delete($destination . '/' . $deleted_file);
+					\JFile::delete($destination . '/' . $deleted_file);
 				}
 			}
 		}
@@ -398,8 +398,8 @@ class Installer extends \forge\core\Object
 			{
 				$newdir = dirname($path['dest']);
 
-				if(!JFolder::create($newdir)) {
-					JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir));
+				if(!\JFolder::create($newdir)) {
+					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir));
 					return false;
 				}
 			}
@@ -416,7 +416,7 @@ class Installer extends \forge\core\Object
 			return 0;
 
 		$copyfiles   = array();
-		$client      = JApplicationHelper::getClientInfo($cid);
+		$client      = \JApplicationHelper::getClientInfo($cid);
 		$destination = $client->path . '/language';
 
 		$folder = (string) $element->attributes()->folder;
@@ -433,13 +433,13 @@ class Installer extends \forge\core\Object
 				$path['src'] = $source . '/' . $file;
 
 				if((string) $file->attributes()->client != '') {
-					$langclient   = JApplicationHelper::getClientInfo((string) $file->attributes()->client, true);
+					$langclient   = \JApplicationHelper::getClientInfo((string) $file->attributes()->client, true);
 					$path['dest'] = $langclient->path . '/language/' . $file->attributes()->tag . '/' . basename((string) $file);
 				}
 				else
 					$path['dest'] = $destination . '/' . $file->attributes()->tag . '/' . basename((string) $file);
 
-				if(!JFolder::exists(dirname($path['dest'])))
+				if(!\JFolder::exists(dirname($path['dest'])))
 					continue;
 			}
 			else {
@@ -451,8 +451,8 @@ class Installer extends \forge\core\Object
 			{
 				$newdir = dirname($path['dest']);
 
-				if(!JFolder::create($newdir)) {
-					JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir));
+				if(!\JFolder::create($newdir)) {
+					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir));
 					return false;
 				}
 			}
@@ -469,10 +469,10 @@ class Installer extends \forge\core\Object
 			return 0;
 
 		$copyfiles = array();
-		$client = JApplicationHelper::getClientInfo($cid);
+		$client = \JApplicationHelper::getClientInfo($cid);
 
 		$folder     = ((string) $element->attributes()->destination) ? '/' . $element->attributes()->destination : null;
-		$destination = JPath::clean(JPATH_ROOT . '/media' . $folder);
+		$destination = \JPath::clean(JPATH_ROOT . '/media' . $folder);
 
 		$folder = (string) $element->attributes()->folder;
 
@@ -491,8 +491,8 @@ class Installer extends \forge\core\Object
 			{
 				$newdir = dirname($path['dest']);
 
-				if(!JFolder::create($newdir)) {
-					JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir));
+				if(!\JFolder::create($newdir)) {
+					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_CREATE_DIRECTORY', $newdir));
 					return false;
 				}
 			}
@@ -541,12 +541,12 @@ class Installer extends \forge\core\Object
 		{
 			foreach($files as $file)
 			{
-				$filesource = JPath::clean($file['src']);
-				$filedest   = JPath::clean($file['dest']);
+				$filesource = \JPath::clean($file['src']);
+				$filedest   = \JPath::clean($file['dest']);
 				$filetype   = array_key_exists('type', $file) ? $file['type'] : 'file';
 
 				if(!file_exists($filesource)) {
-					JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_NO_FILE', $filesource));
+					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_NO_FILE', $filesource));
 					return false;
 				}
 				elseif(($exists = file_exists($filedest)) && !$overwrite)
@@ -554,7 +554,7 @@ class Installer extends \forge\core\Object
 					if($this->getPath('manifest') == $filesource)
 						continue;
  
-					JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_FILE_EXISTS', $filedest));
+					\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_FILE_EXISTS', $filedest));
 
 					return false;
 				}
@@ -562,8 +562,8 @@ class Installer extends \forge\core\Object
 				{
 					if($filetype == 'folder')
 					{
-						if(!(JFolder::copy($filesource, $filedest, null, $overwrite))) {
-							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_FAIL_COPY_FOLDER', $filesource, $filedest));
+						if(!(\JFolder::copy($filesource, $filedest, null, $overwrite))) {
+							\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_FAIL_COPY_FOLDER', $filesource, $filedest));
 							return false;
 						}
 
@@ -571,8 +571,8 @@ class Installer extends \forge\core\Object
 					}
 					else
 					{
-						if(!(JFile::copy($filesource, $filedest, null))) {
-							JError::raiseWarning(1, JText::sprintf('JLIB_INSTALLER_ERROR_FAIL_COPY_FILE', $filesource, $filedest));
+						if(!(\JFile::copy($filesource, $filedest, null))) {
+							\JError::raiseWarning(1, \JText::sprintf('JLIB_INSTALLER_ERROR_FAIL_COPY_FILE', $filesource, $filedest));
 							return false;
 						}
 
@@ -603,7 +603,7 @@ class Installer extends \forge\core\Object
 			$debug = true;
 
 		if($cid > -1)
-			$client = JApplicationHelper::getClientInfo($cid);
+			$client = \JApplicationHelper::getClientInfo($cid);
 		else
 			$client = null;
 
@@ -630,7 +630,7 @@ class Installer extends \forge\core\Object
 				$lang_client = (string) $element->attributes()->client;
 
 				if($lang_client) {
-					$client = JApplicationHelper::getClientInfo($lang_client, true);
+					$client = \JApplicationHelper::getClientInfo($lang_client, true);
 					$source = $client->path . '/language';
 				}
 				else
@@ -663,11 +663,11 @@ class Installer extends \forge\core\Object
 				if($source)
 					$path = $source . '/' . $file->attributes()->tag . '/' . basename((string) $file);
 				else {
-					$target_client = JApplicationHelper::getClientInfo((string) $file->attributes()->client, true);
+					$target_client = \JApplicationHelper::getClientInfo((string) $file->attributes()->client, true);
 					$path          = $target_client->path . '/language/' . $file->attributes()->tag . '/' . basename((string) $file);
 				}
 
-				if(!JFolder::exists(dirname($path)))
+				if(!\JFolder::exists(dirname($path)))
 					continue;
 			}
 			else
@@ -675,25 +675,25 @@ class Installer extends \forge\core\Object
 
 
 			if(is_dir($path))
-				$val = JFolder::delete($path);
+				$val = \JFolder::delete($path);
 			else
-				$val = JFile::delete($path);
+				$val = \JFile::delete($path);
 
 			if($val === false) {
-				JError::raiseWarning(43, 'Failed to delete ' . $path);
+				\JError::raiseWarning(43, 'Failed to delete ' . $path);
 				$retval = false;
 			}
 		}
 
 		if(!empty($folder))
-			$val = JFolder::delete($source);
+			$val = \JFolder::delete($source);
 
 		return $retval;
 	}
 
 	public function copyManifest($cid = 1)
 	{
-		$client = JApplicationHelper::getClientInfo($cid);
+		$client = \JApplicationHelper::getClientInfo($cid);
 
 		$path['src'] = $this->getPath('manifest');
 
@@ -711,7 +711,7 @@ class Installer extends \forge\core\Object
 
 	public function findManifest()
 	{
-		$xmlfiles = JFolder::files($this->getPath('source'), '.xml$', 1, true);
+		$xmlfiles = \JFolder::files($this->getPath('source'), '.xml$', 1, true);
 
 		if(!empty($xmlfiles))
 		{
@@ -738,12 +738,12 @@ class Installer extends \forge\core\Object
 				}
 			}
 
-			JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ERROR_NOTFINDJOOMLAXMLSETUPFILE'));
+			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_NOTFINDJOOMLAXMLSETUPFILE'));
 
 			return false;
 		}
 		else {
-			JError::raiseWarning(1, JText::_('JLIB_INSTALLER_ERROR_NOTFINDXMLSETUPFILE'));
+			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_NOTFINDXMLSETUPFILE'));
 			return false;
 		}    
 		
@@ -752,7 +752,7 @@ class Installer extends \forge\core\Object
 
 	public function isManifest($file)
 	{   
-    $xml = JFactory::getXML($file);
+    $xml = \JFactory::getXML($file);
 
     if(!$xml)
       return null;
@@ -764,7 +764,7 @@ class Installer extends \forge\core\Object
 
 	public function generateManifestCache()
 	{
-		return json_encode(JApplicationHelper::parseXMLInstallFile($this->getPath('manifest')));
+		return json_encode(\JApplicationHelper::parseXMLInstallFile($this->getPath('manifest')));
 	}
 
 	public function findDeletedFiles($old_files, $new_files)
@@ -855,7 +855,7 @@ class Installer extends \forge\core\Object
 	
 	public static function installedArtifacts($artifacts)
 	{
-	  $ext = JTable::getInstance('extension');
+	  $ext = \JTable::getInstance('extension');
 		
 	  foreach($artifacts as $artifact) {      
 	    if(!$ext->load(array($name => $artifact->ext_name)))

@@ -124,11 +124,11 @@ class Core extends \forge\excavate\ExcavateAbstract
         switch($rollback['type']) 
         {
           case 'file' :
-  					$stepval = JFile::delete($step['path']);
+  					$stepval = \JFile::delete($step['path']);
   					break;
 
   				case 'folder' :
-  					$stepval = JFolder::delete($step['path']);
+  					$stepval = \JFolder::delete($step['path']);
   					break;
 
   				case 'query' :

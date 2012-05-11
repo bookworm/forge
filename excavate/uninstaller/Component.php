@@ -13,19 +13,19 @@ class Component extends \forge\excavate\cores\Component
  		$row    = null;
  		$retval = true;
 
- 		$row = JTable::getInstance('extension');
+ 		$row = \JTable::getInstance('extension');
  		if(!$row->load((int) $id)) {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_ERRORUNKOWNEXTENSION'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_ERRORUNKOWNEXTENSION'));
  			return false;
  		}
 
  		if($row->protected) {
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_WARNCORECOMPONENT'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_WARNCORECOMPONENT'));
  			return false;
  		}
 
- 		$this->setPath('extension_administrator', JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $row->element));
- 		$this->setPath('extension_site', JPath::clean(JPATH_SITE . '/components/' . $row->element));
+ 		$this->setPath('extension_administrator', \JPath::clean(JPATH_ADMINISTRATOR . '/components/' . $row->element));
+ 		$this->setPath('extension_site', \JPath::clean(JPATH_SITE . '/components/' . $row->element));
  		$this->setPath('extension_root', $this->getPath('extension_administrator')); 
 
  		$this->setPath('source', $this->getPath('extension_administrator'));
@@ -35,16 +35,16 @@ class Component extends \forge\excavate\cores\Component
 
  		if(!$this->manifest)
  		{
- 			JFolder::delete($this->getPath('extension_administrator'));
- 			JFolder::delete($this->getPath('extension_site'));
+ 			\JFolder::delete($this->getPath('extension_administrator'));
+ 			\JFolder::delete($this->getPath('extension_site'));
 
  			$this->_removeAdminMenus($row);
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_ERRORREMOVEMANUALLY'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_ERRORREMOVEMANUALLY'));
 
  			return false;
  		}
 
- 		$name = strtolower(JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
+ 		$name = strtolower(\JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd'));
  		if(substr($name, 0, 4) == "com_")
  			$element = $name;
  		else
@@ -93,7 +93,7 @@ class Component extends \forge\excavate\cores\Component
  				if(function_exists('com_uninstall'))
  				{
  					if(com_uninstall() === false) {
- 						JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_CUSTOM'));
+ 						\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_CUSTOM'));
  						$retval = false;
  					}
  				}
@@ -111,7 +111,7 @@ class Component extends \forge\excavate\cores\Component
  			$utfresult = $this->parseSQLFiles($this->manifest->uninstall->sql);
 
  			if($utfresult === false) {
- 				JError::raiseWarning(100, JText::sprintf('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_SQL_ERROR', $db->stderr(true)));
+ 				\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_SQL_ERROR', $db->stderr(true)));
  				$retval = false;
  			}
  		}
@@ -127,7 +127,7 @@ class Component extends \forge\excavate\cores\Component
  		$db->setQuery($query);
  		$db->query();
 
- 		$asset = JTable::getInstance('Asset');
+ 		$asset = \JTable::getInstance('Asset');
  		if($asset->loadByName($element))
  			$asset->delete();
 
@@ -139,12 +139,12 @@ class Component extends \forge\excavate\cores\Component
 
  		if($db->getErrorNum())
  		{
- 			JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_FAILED_DELETE_CATEGORIES'));
+ 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_FAILED_DELETE_CATEGORIES'));
  			$this->setError($db->getErrorMsg());
  			$retval = false;
  		}
 
- 		$update = JTable::getInstance('update');
+ 		$update = \JTable::getInstance('update');
  		$uid    = $update->find(array('element' => $row->element, 'type' => 'component', 'client_id' => '', 'folder' => ''));
 
  		if($uid)
@@ -154,16 +154,16 @@ class Component extends \forge\excavate\cores\Component
  		{
  			if(is_dir($this-getPath('extension_site')))
  			{
- 				if(!JFolder::delete($this->getPath('extension_site'))) {
- 					JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_FAILED_REMOVE_DIRECTORY_SITE'));
+ 				if(!\JFolder::delete($this->getPath('extension_site'))) {
+ 					\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_FAILED_REMOVE_DIRECTORY_SITE'));
  					$retval = false;
  				}
  			}
 
  			if(is_dir($this->getPath('extension_administrator')))
  			{
- 				if(!JFolder::delete($this->getPath('extension_administrator'))) {
- 					JError::raiseWarning(100, JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_FAILED_REMOVE_DIRECTORY_ADMIN'));
+ 				if(!\JFolder::delete($this->getPath('extension_administrator'))) {
+ 					\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_FAILED_REMOVE_DIRECTORY_ADMIN'));
  					$retval = false;
  				}
  			}
@@ -174,7 +174,7 @@ class Component extends \forge\excavate\cores\Component
  			return $retval;
  		}
  		else {
- 			JError::raiseWarning(100, 'JLIB_INSTALLER_ERROR_COMP_UNINSTALL_NO_OPTION');
+ 			\JError::raiseWarning(100, 'JLIB_INSTALLER_ERROR_COMP_UNINSTALL_NO_OPTION');
  			return false;
  		}
  	}

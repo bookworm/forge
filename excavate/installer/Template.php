@@ -67,10 +67,10 @@ class Template extends \forge\excavate\cores\Template
   
   public function task_setMessageCopyManifest()
   {
-    $this->set('message', JText::_((string) $xml->description));
+    $this->set('message', \JText::_((string) $xml->description));
 
 		if(!$this->copyManifest(-1)) {
-			$this->abort(JText::_('JLIB_INSTALLER_ABORT_TPL_INSTALL_COPY_SETUP'));
+			$this->abort(\JText::_('JLIB_INSTALLER_ABORT_TPL_INSTALL_COPY_SETUP'));
 			return false;
 		}
 		
