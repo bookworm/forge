@@ -10,7 +10,7 @@ jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.archive');
 jimport('joomla.filesystem.path');
-jimport('joomla.base.adapter');
+jimport('joomla.base.adapter');  
 
 class Installer extends \forge\core\Object
 {
@@ -876,10 +876,46 @@ class Installer extends \forge\core\Object
     	else 
       	$group = null;
   	  
-	    if(!\JInstallerHelper::getExtensionID($this->artifact->type, $this->artifact->db_name, $client, $group))
+	    if(!\self::getExtensionID($artifact->type, $artifact->db_name, $client, $group))
   	    return false;
 	  }
 	  
 	  return true;
+	}  
+	
+	public function getExtensionID($type, $id, $client, $group) 
+	{
+	  $db = $this->parent->getDbo();
+		$result = $id;
+
+		$query = $db->getQuery(true);
+		$query->select('extension_id');
+		$query->from('#__extensions');
+		$query->where('type = ' . $db->Quote($type));
+		$query->where('element = ' . $db->Quote($id));
+
+		switch ($type)
+		{
+			case 'plugin':
+				$query->where('folder = ' . $db->Quote($group));
+				break;
+
+			case 'library':
+			case 'package':
+			case 'component':
+				break;
+
+			case 'language':
+			case 'module':
+			case 'template':
+				$client = JApplicationHelper::getClientInfo($client, true);
+				$query->where('client_id = ' . (int) $client->id);
+				break;
+		}
+
+		$db->setQuery($query);
+		$result = $db->loadResult();
+
+		return $result;
 	}
 }
