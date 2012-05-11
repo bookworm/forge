@@ -885,7 +885,7 @@ class Installer extends \forge\core\Object
 	
 	public static function getExtensionID($type, $id, $client, $group) 
 	{
-	  $db = $this->parent->getDbo();
+	  $db = \JFactory::getDbo();
 		$result = $id;
 
 		$query = $db->getQuery(true);
@@ -908,7 +908,7 @@ class Installer extends \forge\core\Object
 			case 'language':
 			case 'module':
 			case 'template':
-				$client = JApplicationHelper::getClientInfo($client, true);
+				$client = \JApplicationHelper::getClientInfo($client, true);
 				$query->where('client_id = ' . (int) $client->id);
 				break;
 		}
