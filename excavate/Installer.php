@@ -856,19 +856,27 @@ class Installer extends \forge\core\Object
 	}  
 	
 	public function installedArtifact($artifact)
-	{
-    if($ext->load(array($name => $artifact->db_name)));    
-      return true;  
-            
-    return false;
+	{      
+    return self::installedArtifacts(array($artifact));
 	} 
 	
 	public static function installedArtifacts($artifacts)
 	{
 	  $ext = \JTable::getInstance('extension');
 		
-	  foreach($artifacts as $artifact) {      
-	    if(!$ext->load(array('name' => $artifact->db_name)))
+	  foreach($artifacts as $artifact) 
+	  {                 
+	    if(isset($artifact->client)) 
+    	  $client = $artifact->client;
+  	  else  
+    	  $client = 0;
+    	  
+    	if(isset($artifact->group))
+      	$group = $artifact->group;
+    	else 
+      	$group = null;
+  	  
+	    if(!\JInstallerHelper::getExtensionID($this->artifact->type, $this->artifact->db_name, $client, $group))
   	    return false;
 	  }
 	  

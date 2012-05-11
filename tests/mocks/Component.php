@@ -4,7 +4,7 @@ class ComponentMock
 {
   public $name              = 'Demo Component';
   public $ext_name          = 'Demo Component';   
-  public $db_name           = 'demo';
+  public $db_name           = 'com_demo';
   public $slug              = 'com_demo';
   public $type              = 'component';
   public $desc              = 'Awesome demo component desc';

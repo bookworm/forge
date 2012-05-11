@@ -47,7 +47,7 @@ class Core extends \forge\excavate\ExcavateAbstract
   
   public function setupUninstall()
   {   
-    $this->eid = \JInstallerHelper::getExtensionId($this->artifact->db_name);   
+    $this->eid = \JInstallerHelper::getExtensionID($this->artifact->type, $this->artifact->db_name);   
               
 		return true;
   } 
