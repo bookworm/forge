@@ -876,7 +876,7 @@ class Installer extends \forge\core\Object
     	else 
       	$group = null;
   	  
-	    if(!\self::getExtensionID($artifact->type, $artifact->db_name, $client, $group))
+	    if(!self::getExtensionID($artifact->type, $artifact->db_name, $client, $group))
   	    return false;
 	  }
 	  
