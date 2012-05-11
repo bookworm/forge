@@ -406,7 +406,7 @@ class Component extends \forge\excavate\Excavator
 			$utfresult = $this->parseSQLFiles($this->manifest->install->sql);
 
 			if($utfresult === false) {
-				$this->abort(\\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_INSTALL_SQL_ERROR', $db->stderr(true)));
+				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_INSTALL_SQL_ERROR', $db->stderr(true)));
 				return false;
 			}
 		}
