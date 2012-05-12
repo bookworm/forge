@@ -7,9 +7,7 @@ use forge\excavate\updater;
 class File extends \forge\excavate\cores\File
 { 
   public function _init()
-  {
-    paren::_init();
-    
+  {    
     $this->setOverwrite(true);
 		$this->setUpgrade(true);
 		$this->route = 'update';

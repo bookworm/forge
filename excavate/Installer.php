@@ -720,14 +720,16 @@ class Installer extends \forge\core\Object
 	}
 
 	public function findManifest()
-	{
+	{                        
+	  echo $this->getPath('source');
+	  echo "\n";
 		$xmlfiles = \JFolder::files($this->getPath('source'), '.xml$', 1, true);
 
 		if(!empty($xmlfiles))
 		{
 			foreach($xmlfiles as $file)
 			{
-				$manifest = $this->isManifest($file);
+				$manifest = $this->isManifest($file);   
 
 				if(!is_null($manifest))
 				{   
@@ -756,7 +758,7 @@ class Installer extends \forge\core\Object
 			\JError::raiseWarning(1, \JText::_('JLIB_INSTALLER_ERROR_NOTFINDXMLSETUPFILE'));
 			return false;
 		}    
-		
+		    
 		return true;
 	}
 
@@ -869,7 +871,7 @@ class Installer extends \forge\core\Object
 	    if(isset($artifact->client)) 
     	  $client = $artifact->client;
   	  else  
-    	  $client = 0;
+    	  $client = 'site';
     	  
     	if(isset($artifact->group))
       	$group = $artifact->group;
@@ -884,7 +886,7 @@ class Installer extends \forge\core\Object
 	}  
 	
 	public static function getExtensionID($type, $id, $client, $group) 
-	{
+	{                
 	  $db = \JFactory::getDbo();
 		$result = $id;
 
@@ -894,28 +896,35 @@ class Installer extends \forge\core\Object
 		$query->where('type = ' . $db->Quote($type));
 		$query->where('element = ' . $db->Quote($id));
 
-		switch ($type)
+		switch($type)
 		{
 			case 'plugin':
 				$query->where('folder = ' . $db->Quote($group));
 				break;
 
-			case 'library':
-			case 'package':
+			case 'library':  
+  			break;
+			case 'package': 
+			  break;
 			case 'component':
 				break;
 
-			case 'language':
-			case 'module':
-			case 'template':
-				$client = \JApplicationHelper::getClientInfo($client, true);
+			case 'language':   
+  			break;
+			case 'module':    
+  			break;
+			case 'template':   
+			  if($client == null)  
+			     $client = 'site';         
+			     
+				$client = \JApplicationHelper::getClientInfo($client, true);  
 				$query->where('client_id = ' . (int) $client->id);
 				break;
 		}
 
 		$db->setQuery($query);
 		$result = $db->loadResult();
-
+          
 		return $result;
 	}
 }

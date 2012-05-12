@@ -10,7 +10,7 @@ class Status extends \forge\core\Object
   public $paused = false;
   
   public function __construct()
-  {
+  {                                  
     $this->log = \KLogger::instance($this->tmpPath() . DS . 'log', \KLogger::INFO);
   }      
   
@@ -115,7 +115,9 @@ class Status extends \forge\core\Object
   public function failedExcavation($excavation)
   {
     $this->log->logError("Failed on excavation: ". $excavation->artifact->name);  
-    die("Failed on excavation: ". $excavation->artifact->name . "\n" . 'Last error: ' . "\n". \JError::getError());
+    die("Failed on excavation: ". $excavation->artifact->name . "\n" . 'Last error: ' . "\n". \JError::getError() 
+      . "\n" . 'Message: ' . $excavation->getMessage() . "\n"
+    );
   }   
   
   public function finishedExcavation($excavation, $key)

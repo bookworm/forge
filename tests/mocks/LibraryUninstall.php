@@ -1,6 +1,6 @@
 <?php
 
-class LibraryMock
+class LibraryMockUninstall
 {
   public $name              = 'Demo Library';
   public $ext_name          = 'Demo Library';  
@@ -17,5 +17,6 @@ class LibraryMock
   public $incompatibilities = array();
   public $compatibilities   = array();
   public $dependencies      = array();
-  public $integrations      = array();
+  public $integrations      = array(); 
+  public $uninstall         = true;
 }

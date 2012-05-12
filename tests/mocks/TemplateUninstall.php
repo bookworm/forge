@@ -1,6 +1,6 @@
 <?php
 
-class TemplateMock
+class TemplateMockUninstall
 {
   public $name              = 'Demo Template';
   public $ext_name          = 'Demo Template';  
@@ -17,5 +17,6 @@ class TemplateMock
   public $incompatibilities = array();
   public $compatibilities   = array();
   public $dependencies      = array();
-  public $integrations      = array();
+  public $integrations      = array(); 
+  public $uninstall         = true;
 }

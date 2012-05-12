@@ -8,8 +8,6 @@ class Language extends \forge\excavate\cores\Language
 {        
   public function _init()
   {    
-    parent::_init();  
-          
     $source = $this->getPath('source');
 
 		if(!$source)

@@ -6,6 +6,23 @@ use forge\excavate\uninstaller;
 
 class Plugin extends \forge\excavate\cores\Plugin
 { 
+  public function _init()
+  {        
+    $artifact = $this->artifact;
+       
+    if(isset($artifact->client)) 
+  	  $client = $artifact->client;
+	  else  
+  	  $client = 'site';
+  	  
+  	if(isset($artifact->group))
+    	$group = $artifact->group;
+  	else 
+    	$group = null;
+    	
+    $this->eid = \forge\excavate\Installer::getExtensionID($artifact->type, $artifact->db_name, $client, $group);
+  }
+  
   public function task_uninstall()
  	{
  		$this->route = 'uninstall';
@@ -100,7 +117,6 @@ class Plugin extends \forge\excavate\cores\Plugin
  		if($this->manifestClass && method_exists($this->manifestClass, 'uninstall'))
  			$this->manifestClass->uninstall($this);
 
- 		// Append messages
  		$this->msg = ob_get_contents();
  		ob_end_clean();
 

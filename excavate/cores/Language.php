@@ -8,11 +8,6 @@ class Language extends \forge\excavate\Excavator
 {                                                             
   public $_core = false;  
   
-  public function _init()
-  {
-    parent::_init();          
-  }      
-  
   public function _install($cname, $basePath, $clientId, &$element)
   {       
 		$name = \JFilterInput::getInstance()->clean((string) $this->manifest->name, 'cmd');

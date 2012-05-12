@@ -99,7 +99,9 @@ class Library extends \forge\excavate\Excavator
   } 
   
   public function _taskInsertDBStuff()
-  {
+  {      
+    $element = $this->element;   
+    
     $db = $this->getDbo();
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName('extension_id'));

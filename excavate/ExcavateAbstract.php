@@ -23,7 +23,7 @@ class ExcavateAbstract extends \forge\core\Object
     
   public function addMessage($message)
   {
-    $this->messages   = $message;    
+    $this->message   = $message;    
     $this->messages[] = $message; 
     $this->log->logInfo($message);
     
@@ -36,8 +36,13 @@ class ExcavateAbstract extends \forge\core\Object
     $this->log->logInfo($message);
     
     return $this;
+  }    
+ 
+  public function getMessage()
+  {
+    return $this->msg;
   }  
-
+  
   public function setErrorMessage($message)
   {                                       
     $this->success      = false;

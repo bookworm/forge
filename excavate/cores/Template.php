@@ -187,7 +187,7 @@ class Template extends \forge\excavate\Excavator
 		$this->set('element', $element);
 		$this->db       = $db;
 		$this->lang     = $lang;
-		$this->xml      = $lang;   
+		$this->xml      = $xml;   
 		$this->basePath = $basePath;
 		$this->clientId = $clientId;
 
@@ -226,7 +226,7 @@ class Template extends \forge\excavate\Excavator
     $element = $this->element; 
     $xml     = $this->xml; 
     
-    $this->setPath('extension_root', $basePath . '/templates/' . $element);
+    $this->setPath('extension_root', $this->basePath . '/templates/' . $element);
 
 		if(file_exists($this->getPath('extension_root')) && (!$this->getOverwrite() || $this->getUpgrade()))
 		{
@@ -280,8 +280,10 @@ class Template extends \forge\excavate\Excavator
      
   public function _taskRowStore()
   {
-    $row = \JTable::getInstance('extension'); 
-    $id  = $this->eid;
+    $row      = \JTable::getInstance('extension'); 
+    $id       = $this->eid;       
+    $clientId = $this->clientId;           
+    $db       = $this->getDbo();
 
 		if($this->route == 'update' && $id)
 			$row->load($id);

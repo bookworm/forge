@@ -1,6 +1,6 @@
 <?php
 
-class PluginMock
+class PluginMockUninstall
 {
   public $name              = 'Demo Plugin';
   public $ext_name          = 'Demo Plugin';        
@@ -18,5 +18,6 @@ class PluginMock
   public $incompatibilities = array();
   public $compatibilities   = array();
   public $dependencies      = array();
-  public $integrations      = array();
+  public $integrations      = array();  
+  public $uninstall         = true;
 }

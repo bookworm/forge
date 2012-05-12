@@ -5,13 +5,24 @@ namespace forge\excavate\uninstaller;
 use forge\excavate\uninstaller;
 
 class Language extends \forge\excavate\cores\Language
-{                    
-  public function _init($eid)
-  {      
-    parent::_init();      
-    $this->eid = $eid;
-  }     
-  
+{ 
+  public function _init()
+  {        
+    $artifact = $this->artifact;
+       
+    if(isset($artifact->client)) 
+  	  $client = $artifact->client;
+	  else  
+  	  $client = 'site';
+  	  
+  	if(isset($artifact->group))
+    	$group = $artifact->group;
+  	else 
+    	$group = null;
+    	
+    $this->eid = \forge\excavate\Installer::getExtensionID($artifact->type, $artifact->db_name, $client, $group);
+  }
+                     
   public function task_uninstall()
   {
     $eid = $this->eid;  

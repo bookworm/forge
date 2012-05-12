@@ -31,13 +31,13 @@ class Excavator extends \forge\core\Object
    
   public function _addAll()
   {
-    foreach($this->artifacts as $artifact) {
+    foreach($this->artifacts as $artifact) {  
       $this->add($artifact);
     }
   }
   
   public function add($artifact)
-  {                             
+  {         
     if(!$this->completed($artifact))
     { 
       if($artifact->slug == 'JCore') 
@@ -76,7 +76,7 @@ class Excavator extends \forge\core\Object
   }
   
   public function completed($artifact)
-  {                    
+  {              
     return file_exists($this->tmpPath() . DS . 'Excavation' . '_' . $artifact->slug . '_completed');
   }  
 

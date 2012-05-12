@@ -51,7 +51,7 @@ class Core extends \forge\excavate\ExcavateAbstract
     if(isset($artifact->client)) 
   	  $client = $artifact->client;
 	  else  
-  	  $client = 0;
+  	  $client = 'site';
   	  
   	if(isset($artifact->group))
     	$group = $artifact->group;
@@ -122,12 +122,13 @@ class Core extends \forge\excavate\ExcavateAbstract
   }    
   
   public function abort($message='')
-  {                                     
+  {                                
+    $this->msg = $message;     
     $this->log->logError($message);
-    $this->log->logError('Had to abort: ' . $this->artifact->name);  
+    $this->log->logError('Had to abort: ' . $this->artifact->name);          
+    
     foreach($this->rollbacks as $rollback)
     {               
-                                     
       if(isset($rollback['task']) AND method_exists("task_$rollback".'_'.'rollback')) 
       {
         if($this->executeSpecificTask("task_$rollback".'_'.'rollback', $arg) == false)
@@ -163,7 +164,9 @@ class Core extends \forge\excavate\ExcavateAbstract
   					break;   
         }
       }
-    }
+    }        
+    
+    return true;
   }    
   
 /**

@@ -7,9 +7,7 @@ use forge\excavate\updater;
 class Plugin extends \forge\excavate\cores\Plugin
 {        
   public function _init()
-  {                         
-    parent::_init();
-    
+  {                             
     $this->setOverwrite(true);
 		$this->setUpgrade(true);
 		$this->route = 'update';
@@ -60,7 +58,7 @@ class Plugin extends \forge\excavate\cores\Plugin
     if($this->route == 'update')
 		{
 			$old_manifest = null;
-			$tmpInstaller = new JInstaller; 
+			$tmpInstaller = new \JInstaller; 
 
 			$tmpInstaller->setPath('source', $this->getPath('extension_root'));
 			if($tmpInstaller->findManifest()) {
@@ -74,24 +72,24 @@ class Plugin extends \forge\excavate\cores\Plugin
   
   public function task_parseXMLFiles()
   {
- 	 if($this->parseFiles($xml->files, -1, $this->oldFiles) === false) {
- 	 	$this->abort();
- 	 	return false;
- 	 }  
-  
- 	 return true;
+ 	  if($this->parseFiles($this->xml->files, -1, $this->oldFiles) === false) {
+ 	  	$this->abort();
+ 	  	return false;
+ 	  }  
+    
+ 	  return true;
   }  
   
   public function task_parseMedia()
   {
-    $this->parseMedia($xml->media, 1);
+    $this->parseMedia($this->xml->media, 1);
   
  	 return true;
   }      
   
   public function task_parseLanguages()
   {
-    $this->parseLanguages($xml->languages, 1);
+    $this->parseLanguages($this->xml->languages, 1);
   
  	 return true;
   }             

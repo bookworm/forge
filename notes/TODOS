@@ -160,4 +160,9 @@ Dig class:
     
 > need to serialize excavations without certain shit. magic method?
 - make sure wakeup on a excavation is correct. 
-  probably need to re-initialize stuff in __wakeup    
+  probably need to re-initialize stuff in __wakeup 
+- test packages for upgrades of all types.    
+
+
+# Future:
+  - Fix library uninstalls

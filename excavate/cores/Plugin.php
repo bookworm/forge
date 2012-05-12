@@ -357,8 +357,10 @@ class Plugin extends \forge\excavate\Excavator
 
   public function _taskInsertRowDB()
   {
-    $row = \JTable::getInstance('extension');  
-    $id  = $this->eid;    
+    $row     = \JTable::getInstance('extension');  
+    $id      = $this->eid;    
+    $element = $this->element;
+    $group   = $this->group;
     
  		if($id)
  		{

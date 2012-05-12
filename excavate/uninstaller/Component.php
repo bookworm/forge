@@ -6,6 +6,23 @@ use forge\excavate\uninstaller;
 
 class Component extends \forge\excavate\cores\Component 
 {   
+  public function _init()
+  {        
+    $artifact = $this->artifact;
+       
+    if(isset($artifact->client)) 
+  	  $client = $artifact->client;
+	  else  
+  	  $client = 'site';
+  	  
+  	if(isset($artifact->group))
+    	$group = $artifact->group;
+  	else 
+    	$group = null;
+    	
+    $this->eid = \forge\excavate\Installer::getExtensionID($artifact->type, $artifact->db_name, $client, $group);
+  }
+  
   public function task_uninstall()
  	{        
  	  $id     = $this->eid;
@@ -152,7 +169,7 @@ class Component extends \forge\excavate\cores\Component
 
  		if(trim($row->element))
  		{
- 			if(is_dir($this-getPath('extension_site')))
+ 			if(is_dir($this->getPath('extension_site')))
  			{
  				if(!\JFolder::delete($this->getPath('extension_site'))) {
  					\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_COMP_UNINSTALL_FAILED_REMOVE_DIRECTORY_SITE'));

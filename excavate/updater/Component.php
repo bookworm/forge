@@ -5,7 +5,9 @@ namespace forge\excavate\updater;
 use forge\excavate\updater;
 
 class Component extends \forge\excavate\cores\Component
-{
+{                      
+  public $oldAdminFiles = null;
+  
   public function task_setStuff()
   {
     $db = $this->getDbo();
@@ -52,11 +54,11 @@ class Component extends \forge\excavate\cores\Component
 
  		if($old_manifest) {
  			$this->oldAdminFiles = $old_manifest->administration->files;
- 			$this->oldFiles = $old_manifest->files;
+ 			$this->oldFiles      = $old_manifest->files;
  		}
  		else {
  			$this->oldAdminFiles = null;
- 			$this->oldFiles = null;
+ 			$this->oldFiles      = null;
  		}
 
  		if(!$this->manifest->administration) {
@@ -257,24 +259,26 @@ class Component extends \forge\excavate\cores\Component
   {
     $row       = \JTable::getInstance('extension');
  		$eid       = $row->find(array('element' => strtolower($this->get('element')), 'type' => 'component'));     
- 		$this->eid = $eid;
+ 		$this->eid = $eid;   
+ 		$db        = $this->getDbo();
 
  		if($this->manifest->update)
- 		{
+ 		{                        
  			$result = $this->parseSchemaUpdates($this->manifest->update->schemas, $eid);
-
  			if($result === false) {
  				$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_COMP_UPDATE_SQL_ERROR', $db->stderr(true)));
  				return false;
  			}
- 		}
+ 		}     
+ 		
+ 		$this->row = $row;
  		
  		return true;
   } 
   
   public function task_buildAdminMenus()
   {
-    if(!$this->_buildAdminMenus($eid))
+    if(!$this->_buildAdminMenus($this->eid))
  			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ABORT_COMP_BUILDADMINMENUS_FAILED'));
  		
  		return true;
@@ -341,7 +345,9 @@ class Component extends \forge\excavate\cores\Component
   
   public function task_rowStore()
   {    
-    $eid = $this->eid;
+    $eid = $this->eid;          
+    $db  = $this->getDbo();    
+    $row = $this->row;
     
     if($eid)
  			$row->load($eid);

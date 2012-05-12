@@ -1,6 +1,6 @@
 <?php
 
-class ModuleMock1
+class ModuleMockUninstall1
 {
   public $name              = 'Demo Module1';
   public $ext_name          = 'Demo Module1';             
@@ -17,5 +17,6 @@ class ModuleMock1
   public $incompatibilities = array();
   public $compatibilities   = array();
   public $dependencies      = array();
-  public $integrations      = array();
+  public $integrations      = array();   
+  public $uninstall         = true;
 }

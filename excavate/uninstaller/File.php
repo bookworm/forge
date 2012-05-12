@@ -5,7 +5,24 @@ namespace forge\excavate\uninstaller;
 use forge\excavate\uninstaller;
 
 class File extends \forge\excavate\cores\File
-{  
+{ 
+  public function _init()
+  {        
+    $artifact = $this->artifact;
+       
+    if(isset($artifact->client)) 
+  	  $client = $artifact->client;
+	  else  
+  	  $client = 'site';
+  	  
+  	if(isset($artifact->group))
+    	$group = $artifact->group;
+  	else 
+    	$group = null;
+    	
+    $this->eid = \forge\excavate\Installer::getExtensionID($artifact->type, $artifact->db_name, $client, $group);
+  }
+   
   public function task_uninstall()
  	{         
  	  $id = $this->eid;

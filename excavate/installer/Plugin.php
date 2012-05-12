@@ -47,8 +47,10 @@ class Plugin extends \forge\excavate\cores\Plugin
   }    
   
   public function task_parseXMLFiles()
-  {
-		if($this->parseFiles($xml->files, -1, $this->oldFiles) === false) {
+  {                    
+    $xml = $this->xml;
+    
+		if($this->parseFiles($xml->files, -1, null) === false) {
 			$this->abort();
 			return false;
 		}  
@@ -57,14 +59,18 @@ class Plugin extends \forge\excavate\cores\Plugin
   }  
   
   public function task_parseMedia()
-  {
+  {    
+    $xml = $this->xml;
+    
     $this->parseMedia($xml->media, 1);
 		
 		return true;
   }      
   
   public function task_parseLanguages()
-  {
+  {    
+    $xml = $this->xml;
+    
     $this->parseLanguages($xml->languages, 1);
 		
 		return true;

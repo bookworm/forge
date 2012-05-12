@@ -5,7 +5,24 @@ namespace forge\excavate\uninstaller;
 use forge\excavate\uninstaller;
 
 class Module extends \forge\excavate\cores\Module
-{  
+{ 
+  public function _init()
+  {        
+    $artifact = $this->artifact;
+       
+    if(isset($artifact->client)) 
+  	  $client = $artifact->client;
+	  else  
+  	  $client = 'site';
+  	  
+  	if(isset($artifact->group))
+    	$group = $artifact->group;
+  	else 
+    	$group = null;
+    	
+    $this->eid = \forge\excavate\Installer::getExtensionID($artifact->type, $artifact->db_name, $client, $group);
+  }
+   
   public function task_uninstall()
 	{          
 	  $id     = $this->eid;
@@ -23,8 +40,8 @@ class Module extends \forge\excavate\cores\Module
 		if($row->protected) {
 			\JError::raiseWarning(100, \JText::sprintf('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_WARNCOREMODULE', $row->name));
 			return false;
-		}
-
+		} 
+		
 		$element = $row->element;
 		$client  = \JApplicationHelper::getClientInfo($row->client_id);
 
@@ -35,12 +52,15 @@ class Module extends \forge\excavate\cores\Module
 		$this->setPath('extension_root', $client->path . '/modules/' . $element);
 
 		$this->setPath('source', $this->getPath('extension_root'));
-
-		$this->findManifest();
+         
+      echo 'gug?';
+                         
 		$this->manifest = $this->getManifest();
+    echo 'gug?';
 
 		$this->loadLanguage(($row->client_id ? JPATH_ADMINISTRATOR : JPATH_SITE) . '/modules/' . $element);
-
+      
+    echo 'gug?';
 		$this->scriptElement = $this->manifest->scriptfile;
 		$manifestScript      = (string) $this->manifest->scriptfile;
 
@@ -68,7 +88,7 @@ class Module extends \forge\excavate\cores\Module
 		$this->msg = ob_get_contents();
 		ob_end_clean();
 
-		if(!($this->manifest instanceof JXMLElement)) 
+		if(!($this->manifest instanceof \JXMLElement)) 
 		{
 			\JFolder::delete($this->getPath('extension_root'));
 			\JError::raiseWarning(100, \JText::_('JLIB_INSTALLER_ERROR_MOD_UNINSTALL_INVALID_NOTFOUND_MANIFEST'));

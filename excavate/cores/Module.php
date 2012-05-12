@@ -5,7 +5,11 @@ namespace forge\excavate\cores;
 use forge\excavate\cores;
 
 class Module extends \forge\excavate\Excavator  
-{
+{                     
+  public $basePath;
+  public $clientId;  
+  public $cname;
+  
   public function loadLanguage($path = null)
 	{
 		$source = $this->getPath('source');
@@ -46,9 +50,9 @@ class Module extends \forge\excavate\Excavator
 
 				$client = (string) $this->manifest->attributes()->client;
 				$lang->load($extension . '.sys', $source, null, false, false)
-					|| $lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), null, false, false)
+					|| @$lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), null, false, false)
 					|| $lang->load($extension . '.sys', $source, $lang->getDefault(), false, false)
-					|| $lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), $lang->getDefault(), false, false);
+					|| @$lang->load($extension . '.sys', constant('JPATH_' . strtoupper($client)), $lang->getDefault(), false, false);
 			}
 		}
 	}       
@@ -220,13 +224,20 @@ class Module extends \forge\excavate\Excavator
 		else {
 			$this->abort(\JText::sprintf('JLIB_INSTALLER_ABORT_MOD_INSTALL_NOFILE', \JText::_('JLIB_INSTALLER_' . $this->route)));
 			return false;
-		}   
+		}
+		
+		$this->basePath = $basePath; 
+		$this->clientId = $clientId;
+		$this->cname    = $cname;
 		
 		return true;
   }
   
   public function _taskGetDBID()
-  {          
+  {       
+    $element  = $this->element; 
+    $clientId = $this->clientId;
+       
     $db    = $this->db;
     $query = $db->getQuery(true);
 		$query->select($query->qn('extension_id'))->from($query->qn('#__extensions'));
@@ -258,7 +269,7 @@ class Module extends \forge\excavate\Excavator
 				$this->setOverwrite(true);
 				$this->setUpgrade(true);
 
-				if($id)
+				if($this->eid)
 					$this->route = 'Update';
 			}
 			elseif(!$this->getOverwrite())
@@ -374,8 +385,10 @@ class Module extends \forge\excavate\Excavator
   
   public function _taskInsertRowDBStuff()
   {
-    $row = \JTable::getInstance('extension');    
-    $id  = $this->eid;  
+    $row      = \JTable::getInstance('extension');    
+    $id       = $this->eid;             
+    $clientId = $this->clientId;
+    $db       = $this->getDbo();
     
 		if($id)
 		{

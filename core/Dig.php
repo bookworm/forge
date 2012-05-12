@@ -145,5 +145,10 @@ class Dig extends \forge\core\Object
         $excavation->refreshManifestCache();
       } 
     }
-	}      
+	}  
+	
+	# public function __destruct() 
+	# { 
+	#   JFolder::delete
+  # }    
 }

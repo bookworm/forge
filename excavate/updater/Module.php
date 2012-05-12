@@ -7,9 +7,7 @@ use forge\excavate\updater;
 class Module extends \forge\excavate\cores\Module
 { 
   public function _init()
-  {
-    parent::_init();
-    
+  {    
     $this->setOverwrite(true);
 		$this->setUpgrade(true);
 		$this->route = 'Update';
@@ -57,14 +55,14 @@ class Module extends \forge\excavate\cores\Module
   
   public function task_parseMedia()
   {
-    $this->parseMedia($this->manifest->media, $clientId);
+    $this->parseMedia($this->manifest->media, $this->clientId);
 		
 		return true;
   } 
   
   public function task_parseLanguages()
   {
-    $this->parseLanguages($this->manifest->languages, $clientId);
+    $this->parseLanguages($this->manifest->languages, $this->clientId);
 		
 		return true;
   } 
